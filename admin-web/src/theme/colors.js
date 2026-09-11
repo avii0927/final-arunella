@@ -1,0 +1,33 @@
+export const colors = {
+  primary: '#0d631b',
+  onPrimary: '#ffffff',
+  primaryContainer: '#2e7d32',
+  onPrimaryContainer: '#cbffc2',
+  secondary: '#2a6b2c',
+  secondaryContainer: '#acf4a4',
+  onSecondaryContainer: '#307231',
+  surface: '#f9f9f6',
+  surfaceContainerLowest: '#ffffff',
+  surfaceContainerLow: '#f3f4f1',
+  surfaceContainer: '#eeeeeb',
+  surfaceContainerHigh: '#e8e8e5',
+  surfaceContainerHighest: '#e2e3e0',
+  onSurface: '#1a1c1a',
+  onSurfaceVariant: '#40493d',
+  outlineVariant: '#bfcaba',
+  error: '#D32F2F',
+  errorContainer: '#ffdad6',
+  onErrorContainer: '#93000a',
+  leafGreen: '#4CAF50',
+  earthGray: '#F2F2F2',
+  userTan: '#FFF9C4',
+  actionBlue: '#E1F5FE',
+  warning: '#ED6C02',
+  surfaceTint: '#1b6d24',
+  background: '#f9f9f6',
+  onBackground: '#1a1c1a',
+};
+
+export const typography = {
+  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+};

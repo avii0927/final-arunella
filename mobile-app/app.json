@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Arunella",
+    "slug": "arunella",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#2D7D46"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2D7D46",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

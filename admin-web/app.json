@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Arunella Admin Console",
+    "slug": "arunella-admin-web",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    }
+  }
+}
