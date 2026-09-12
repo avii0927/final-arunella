@@ -8,7 +8,6 @@ const NAV_ITEMS = [
   { id: 'Users', label: 'Users', icon: 'group' },
   { id: 'Products', label: 'Products', icon: 'eco' },
   { id: 'Deliveries', label: 'Deliveries', icon: 'local-shipping' },
-  { id: 'FraudDetection', label: 'Fraud Detection', icon: 'security' },
 ];
 
 export default function Sidebar({ activeTab, onSelectTab }) {

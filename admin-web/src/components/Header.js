@@ -45,12 +45,6 @@ export default function Header({ title, showSearch, searchQuery, setSearchQuery,
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
-          <MaterialIcons name="notifications" size={22} color={colors.onSurfaceVariant} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
-          <MaterialIcons name="settings" size={22} color={colors.onSurfaceVariant} />
-        </TouchableOpacity>
         {onLogout && (
           <TouchableOpacity style={styles.logoutButton} onPress={onLogout} activeOpacity={0.7}>
             <MaterialIcons name="logout" size={18} color={colors.error} style={{ marginRight: 4 }} />

@@ -4,7 +4,16 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import KpiCard from '../components/KpiCard';
 
-export default function UsersScreen({ farmers, buyers, transporters, searchQuery, onOpenAddUser }) {
+export default function UsersScreen({
+  farmers,
+  buyers,
+  transporters,
+  searchQuery,
+  onOpenAddUser,
+  onDeleteFarmer,
+  onDeleteBuyer,
+  onDeleteTransporter,
+}) {
   const filteredFarmers = farmers.filter(
     (f) =>
       !searchQuery ||
@@ -72,25 +81,26 @@ export default function UsersScreen({ farmers, buyers, transporters, searchQuery
           </View>
         ) : (
           filteredFarmers.map((f) => (
-            <View key={f.userId} style={styles.tableBodyRow}>
+            <View key={f.userId || f.id} style={styles.tableBodyRow}>
               <View style={[styles.nameCell, { flex: 2 }]}>
                 <View style={styles.avatarCircle}>
                   <Text style={styles.avatarText}>{f.name ? f.name.charAt(0) : 'F'}</Text>
                 </View>
                 <View>
                   <Text style={styles.nameText}>{f.name}</Text>
-                  <Text style={styles.idText}>#F-{f.userId}</Text>
+                  <Text style={styles.idText}>#F-{f.userId || f.id}</Text>
                 </View>
               </View>
               <Text style={[styles.tdSub, { flex: 2 }]}>{f.email}</Text>
               <Text style={[styles.tdMono, { flex: 1.5 }]}>{f.nic}</Text>
               <Text style={[styles.tdSub, { flex: 1.5 }]}>{f.district || '-'}</Text>
               <View style={[styles.actionsCell, { flex: 1 }]}>
-                <TouchableOpacity style={styles.actionBtn}>
-                  <MaterialIcons name="visibility" size={18} color={colors.onSurfaceVariant} />
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionBtn, styles.actionBtnDanger]}>
-                  <MaterialIcons name="block" size={18} color={colors.error} />
+                <TouchableOpacity
+                  style={[styles.actionBtn, styles.actionBtnDanger]}
+                  onPress={() => onDeleteFarmer && onDeleteFarmer(f.userId || f.id)}
+                  activeOpacity={0.7}
+                >
+                  <MaterialIcons name="delete" size={18} color={colors.error} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -117,25 +127,26 @@ export default function UsersScreen({ farmers, buyers, transporters, searchQuery
           </View>
         ) : (
           filteredBuyers.map((b) => (
-            <View key={b.userId} style={styles.tableBodyRow}>
+            <View key={b.userId || b.id} style={styles.tableBodyRow}>
               <View style={[styles.nameCell, { flex: 2 }]}>
                 <View style={styles.buyerBadge}>
                   <Text style={styles.buyerBadgeText}>Buyer</Text>
                 </View>
                 <View>
                   <Text style={styles.nameText}>{b.name}</Text>
-                  <Text style={styles.idText}>#B-{b.userId}</Text>
+                  <Text style={styles.idText}>#B-{b.userId || b.id}</Text>
                 </View>
               </View>
               <Text style={[styles.tdSub, { flex: 2 }]}>{b.email}</Text>
               <Text style={[styles.tdMono, { flex: 1.5 }]}>{b.businessRegNo}</Text>
               <Text style={[styles.tdSub, { flex: 1.5 }]}>{b.marketLocation || '-'}</Text>
               <View style={[styles.actionsCell, { flex: 1 }]}>
-                <TouchableOpacity style={styles.actionBtn}>
-                  <MaterialIcons name="visibility" size={18} color={colors.onSurfaceVariant} />
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionBtn, styles.actionBtnDanger]}>
-                  <MaterialIcons name="block" size={18} color={colors.error} />
+                <TouchableOpacity
+                  style={[styles.actionBtn, styles.actionBtnDanger]}
+                  onPress={() => onDeleteBuyer && onDeleteBuyer(b.userId || b.id)}
+                  activeOpacity={0.7}
+                >
+                  <MaterialIcons name="delete" size={18} color={colors.error} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -162,25 +173,26 @@ export default function UsersScreen({ farmers, buyers, transporters, searchQuery
           </View>
         ) : (
           filteredTransporters.map((t) => (
-            <View key={t.userId} style={styles.tableBodyRow}>
+            <View key={t.userId || t.id} style={styles.tableBodyRow}>
               <View style={[styles.nameCell, { flex: 2 }]}>
                 <View style={styles.transporterAvatar}>
                   <Text style={styles.transporterAvatarText}>{t.name ? t.name.charAt(0) : 'T'}</Text>
                 </View>
                 <View>
                   <Text style={styles.nameText}>{t.name}</Text>
-                  <Text style={styles.idText}>#T-{t.userId}</Text>
+                  <Text style={styles.idText}>#T-{t.userId || t.id}</Text>
                 </View>
               </View>
               <Text style={[styles.tdSub, { flex: 2 }]}>{t.email}</Text>
               <Text style={[styles.tdMono, { flex: 1.5 }]}>{t.vehiclePlateNo}</Text>
               <Text style={[styles.tdSub, { flex: 1.5 }]}>{t.maxCapacity || '-'}</Text>
               <View style={[styles.actionsCell, { flex: 1 }]}>
-                <TouchableOpacity style={styles.actionBtn}>
-                  <MaterialIcons name="visibility" size={18} color={colors.onSurfaceVariant} />
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionBtn, styles.actionBtnDanger]}>
-                  <MaterialIcons name="block" size={18} color={colors.error} />
+                <TouchableOpacity
+                  style={[styles.actionBtn, styles.actionBtnDanger]}
+                  onPress={() => onDeleteTransporter && onDeleteTransporter(t.userId || t.id)}
+                  activeOpacity={0.7}
+                >
+                  <MaterialIcons name="delete" size={18} color={colors.error} />
                 </TouchableOpacity>
               </View>
             </View>

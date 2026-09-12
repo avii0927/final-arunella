@@ -8,24 +8,9 @@ import OverviewScreen from './src/screens/OverviewScreen';
 import UsersScreen from './src/screens/UsersScreen';
 import ProductsScreen from './src/screens/ProductsScreen';
 import DeliveriesScreen from './src/screens/DeliveriesScreen';
-import FraudDetectionScreen from './src/screens/FraudDetectionScreen';
 
 import AddUserModal from './src/components/AddUserModal';
-import AddProductModal from './src/components/AddProductModal';
-import AddDeliveryModal from './src/components/AddDeliveryModal';
-import ReviewFraudModal from './src/components/ReviewFraudModal';
 import { apiService } from './src/services/apiService';
-
-import {
-  initialFarmers,
-  initialBuyers,
-  initialTransporters,
-  initialCrops,
-  initialDeliveries,
-  recentActivityFeed,
-  initialFraudIncidents,
-  systemRiskRules,
-} from './src/mock/mockData';
 
 export default function App() {
   // Authentication state
@@ -38,20 +23,15 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Data state
-  const [farmers, setFarmers] = useState(initialFarmers);
-  const [buyers, setBuyers] = useState(initialBuyers);
-  const [transporters, setTransporters] = useState(initialTransporters);
-  const [crops, setCrops] = useState(initialCrops);
-  const [deliveries, setDeliveries] = useState(initialDeliveries);
-  const [activityFeed, setActivityFeed] = useState(recentActivityFeed);
-  const [fraudIncidents, setFraudIncidents] = useState(initialFraudIncidents);
-  const [rulesList] = useState(systemRiskRules);
+  const [farmers, setFarmers] = useState([]);
+  const [buyers, setBuyers] = useState([]);
+  const [transporters, setTransporters] = useState([]);
+  const [crops, setCrops] = useState([]);
+  const [deliveries, setDeliveries] = useState([]);
+  const [activityFeed, setActivityFeed] = useState([]);
 
   // Modal visibility state
   const [userModalVisible, setUserModalVisible] = useState(false);
-  const [productModalVisible, setProductModalVisible] = useState(false);
-  const [deliveryModalVisible, setDeliveryModalVisible] = useState(false);
-  const [selectedFraudIncident, setSelectedFraudIncident] = useState(null);
 
 
 
@@ -163,75 +143,40 @@ export default function App() {
     }
   };
 
-  // Add Product handler (DB & State)
-  const handleAddProduct = async (productObj) => {
-    const nextId = String(crops.length + 1);
-    const newCropPayload = {
-      productName: productObj.productName,
-      stock: productObj.stock,
-      pricePerKg: productObj.pricePerKg,
-      minPrice: productObj.minPrice,
-      expDate: productObj.expDate,
-      status: productObj.status || 'Active',
-    };
-
+  // Delete Farmers, Buyers, Transporters, Crops, Deliveries handlers (DB & State)
+  const handleDeleteFarmer = async (id) => {
     if (dbConnected) {
-      try {
-        const saved = await apiService.createCrop(newCropPayload);
-        setCrops([saved, ...crops]);
-      } catch (e) {
-        setCrops([{ productId: nextId, ...newCropPayload }, ...crops]);
-      }
-    } else {
-      setCrops([{ productId: nextId, ...newCropPayload }, ...crops]);
+      try { await apiService.deleteFarmer(id); } catch (e) {}
     }
-
-    setActivityFeed([
-      {
-        id: String(Date.now()),
-        title: `New listing: ${productObj.productName}`,
-        subtitle: `${productObj.stock} listed at ${productObj.pricePerKg}`,
-        badgeText: 'New Listing',
-        badgeBg: '#FFF9C4',
-        badgeColor: '#1a1c1a',
-        time: 'Just now',
-        icon: 'inventory-2',
-        iconBg: '#acf4a4',
-        iconColor: '#307231',
-      },
-      ...activityFeed,
-    ]);
+    setFarmers((prev) => prev.filter((f) => f.userId !== id && f.id !== id));
   };
 
-  // Add Delivery handler (DB & State)
-  const handleAddDelivery = async (deliveryObj) => {
-    const nextId = String(1000 + deliveries.length + 1);
-    const deliveryPayload = {
-      orderId: deliveryObj.orderId,
-      pickupLocation: deliveryObj.pickupLocation,
-      deliveryLocation: deliveryObj.deliveryLocation,
-      status: deliveryObj.status,
-    };
-
+  const handleDeleteBuyer = async (id) => {
     if (dbConnected) {
-      try {
-        const saved = await apiService.createDelivery(deliveryPayload);
-        setDeliveries([saved, ...deliveries]);
-        return;
-      } catch (e) {
-        // Fall back
-      }
+      try { await apiService.deleteBuyer(id); } catch (e) {}
     }
-    setDeliveries([{ deliveryId: nextId, ...deliveryPayload }, ...deliveries]);
+    setBuyers((prev) => prev.filter((b) => b.userId !== id && b.id !== id));
   };
 
-  // Fraud incident action handler
-  const handleFraudAction = (incidentId, newStatus) => {
-    setFraudIncidents(
-      fraudIncidents.map((inc) =>
-        inc.id === incidentId ? { ...inc, status: newStatus } : inc
-      )
-    );
+  const handleDeleteTransporter = async (id) => {
+    if (dbConnected) {
+      try { await apiService.deleteTransporter(id); } catch (e) {}
+    }
+    setTransporters((prev) => prev.filter((t) => t.userId !== id && t.id !== id));
+  };
+
+  const handleDeleteProduct = async (id) => {
+    if (dbConnected) {
+      try { await apiService.deleteCrop(id); } catch (e) {}
+    }
+    setCrops((prev) => prev.filter((c) => c.productId !== id && c.id !== id));
+  };
+
+  const handleCancelDelivery = async (id) => {
+    if (dbConnected) {
+      try { await apiService.deleteDelivery(id); } catch (e) {}
+    }
+    setDeliveries((prev) => prev.filter((d) => d.deliveryId !== id && d.id !== id));
   };
 
   // If user is not authenticated, show Login Screen
@@ -241,7 +186,6 @@ export default function App() {
 
   const getHeaderTitle = () => {
     if (activeTab === 'Overview') return 'Arunella Admin';
-    if (activeTab === 'FraudDetection') return 'Fraud Detection & Risk Management';
     return `${activeTab} Management`;
   };
 
@@ -266,28 +210,23 @@ export default function App() {
             transporters={transporters}
             searchQuery={searchQuery}
             onOpenAddUser={() => setUserModalVisible(true)}
+            onDeleteFarmer={handleDeleteFarmer}
+            onDeleteBuyer={handleDeleteBuyer}
+            onDeleteTransporter={handleDeleteTransporter}
           />
         );
       case 'Products':
         return (
           <ProductsScreen
             crops={crops}
-            onOpenAddProduct={() => setProductModalVisible(true)}
+            onDeleteProduct={handleDeleteProduct}
           />
         );
       case 'Deliveries':
         return (
           <DeliveriesScreen
             deliveries={deliveries}
-            onOpenAddDelivery={() => setDeliveryModalVisible(true)}
-          />
-        );
-      case 'FraudDetection':
-        return (
-          <FraudDetectionScreen
-            incidents={fraudIncidents}
-            systemRules={rulesList}
-            onSelectIncident={setSelectedFraudIncident}
+            onCancelDelivery={handleCancelDelivery}
           />
         );
       default:
@@ -319,22 +258,6 @@ export default function App() {
         visible={userModalVisible}
         onClose={() => setUserModalVisible(false)}
         onAddUser={handleAddUser}
-      />
-      <AddProductModal
-        visible={productModalVisible}
-        onClose={() => setProductModalVisible(false)}
-        onAddProduct={handleAddProduct}
-      />
-      <AddDeliveryModal
-        visible={deliveryModalVisible}
-        onClose={() => setDeliveryModalVisible(false)}
-        onAddDelivery={handleAddDelivery}
-      />
-      <ReviewFraudModal
-        visible={!!selectedFraudIncident}
-        incident={selectedFraudIncident}
-        onClose={() => setSelectedFraudIncident(null)}
-        onAction={handleFraudAction}
       />
     </SafeAreaView>
   );

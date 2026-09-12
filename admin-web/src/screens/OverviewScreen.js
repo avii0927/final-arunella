@@ -18,36 +18,24 @@ export default function OverviewScreen({ farmers, crops, deliveries, recentCrops
         <KpiCard
           title="Total Farmers"
           value={farmers.length || 142}
-          subtext="+12% this month"
-          trendIcon="trending-up"
-          trendColor={colors.leafGreen}
           iconName="group"
           iconBg={colors.actionBlue}
         />
         <KpiCard
           title="Total Orders"
           value="892"
-          subtext="+5.4% this month"
-          trendIcon="trending-up"
-          trendColor={colors.leafGreen}
           iconName="shopping-cart"
           iconBg={colors.userTan}
         />
         <KpiCard
           title="Deliveries"
           value={deliveries.length || 312}
-          subtext="Stable this week"
-          trendIcon="remove"
-          trendColor={colors.onSurfaceVariant}
           iconName="local-shipping"
           iconBg={colors.secondaryContainer}
         />
         <KpiCard
           title="Crop Listings"
           value={crops.length || 64}
-          subtext="Active"
-          trendIcon="trending-up"
-          trendColor={colors.leafGreen}
           iconName="eco"
           iconBg={colors.primaryContainer}
         />
@@ -96,7 +84,47 @@ export default function OverviewScreen({ farmers, crops, deliveries, recentCrops
           </View>
 
           <View style={styles.activityList}>
-            {activityFeed.map((item) => (
+            {((activityFeed && activityFeed.length > 0)
+              ? activityFeed
+              : [
+                  ...crops.slice(0, 2).map((c) => ({
+                    id: `crop-${c.productId || Math.random()}`,
+                    title: `Crop listing: ${c.productName}`,
+                    subtitle: `${c.stock || 'Stock'} available at ${c.pricePerKg || 'LKR 200/KG'}`,
+                    badgeText: 'Listing',
+                    badgeBg: '#FFF9C4',
+                    badgeColor: '#1a1c1a',
+                    time: 'Recently',
+                    icon: 'inventory-2',
+                    iconBg: '#acf4a4',
+                    iconColor: '#307231',
+                  })),
+                  ...deliveries.slice(0, 2).map((d) => ({
+                    id: `del-${d.deliveryId || Math.random()}`,
+                    title: `Delivery #${d.deliveryId} (${d.status || 'Active'})`,
+                    subtitle: `From ${d.pickupLocation || 'Origin'} to ${d.deliveryLocation || 'Destination'}`,
+                    badgeText: 'Logistics',
+                    badgeBg: '#e2e3e0',
+                    badgeColor: '#40493d',
+                    time: 'Recently',
+                    icon: 'local-shipping',
+                    iconBg: '#E1F5FE',
+                    iconColor: '#1a1c1a',
+                  })),
+                  ...farmers.slice(0, 1).map((f) => ({
+                    id: `farm-${f.userId || Math.random()}`,
+                    title: `Farmer registered: ${f.name}`,
+                    subtitle: `District: ${f.district || 'Colombo'}`,
+                    badgeText: 'User',
+                    badgeBg: '#cbffc2',
+                    badgeColor: '#0d631b',
+                    time: 'Recently',
+                    icon: 'person-add',
+                    iconBg: '#e2e3e0',
+                    iconColor: '#40493d',
+                  })),
+                ]
+            ).map((item) => (
               <View key={item.id} style={styles.activityItem}>
                 <View style={[styles.activityIconBox, { backgroundColor: item.iconBg }]}>
                   <MaterialIcons name={item.icon} size={18} color={item.iconColor} />

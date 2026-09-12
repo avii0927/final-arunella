@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import KpiCard from '../components/KpiCard';
 
-export default function DeliveriesScreen({ deliveries, onOpenAddDelivery }) {
+export default function DeliveriesScreen({ deliveries, onCancelDelivery }) {
   const activeShipmentsCount = deliveries.filter((d) => d.status !== 'Delivered').length;
 
   return (
@@ -15,10 +15,6 @@ export default function DeliveriesScreen({ deliveries, onOpenAddDelivery }) {
           <Text style={styles.pageTitle}>Delivery Tracking</Text>
           <Text style={styles.subtitle}>Real-time logistics monitoring and fleet management.</Text>
         </View>
-        <TouchableOpacity style={styles.addBtn} onPress={onOpenAddDelivery} activeOpacity={0.8}>
-          <MaterialIcons name="add" size={18} color={colors.onPrimary} style={{ marginRight: 6 }} />
-          <Text style={styles.addBtnText}>New Delivery</Text>
-        </TouchableOpacity>
       </View>
 
       {/* KPI Cards */}
@@ -26,30 +22,19 @@ export default function DeliveriesScreen({ deliveries, onOpenAddDelivery }) {
         <KpiCard
           title="Active Shipments"
           value={activeShipmentsCount || 128}
-          subtext="+12%"
-          trendIcon="trending-up"
-          trendColor={colors.leafGreen}
         />
         <KpiCard
           title="In Transit"
           value="842"
-          subtext="On schedule"
-          trendColor={colors.onSurfaceVariant}
         />
         <KpiCard
           title="Delivered Today"
           value="312"
-          subtext="100% success"
-          trendIcon="check-circle"
-          trendColor={colors.leafGreen}
         />
         <KpiCard
           title="Alerts"
           value="07"
           valueColor={colors.error}
-          subtext="Immediate action"
-          trendIcon="warning"
-          trendColor={colors.error}
         />
       </View>
 
@@ -77,9 +62,9 @@ export default function DeliveriesScreen({ deliveries, onOpenAddDelivery }) {
             const isDelivered = d.status === 'Delivered';
             const isTransit = d.status === 'In Transit';
             return (
-              <View key={d.deliveryId} style={styles.tableBodyRow}>
-                <Text style={[styles.tdMono, { flex: 1.2 }]}>#DLY-{d.deliveryId}</Text>
-                <Text style={[styles.tdMonoSub, { flex: 1.2 }]}>#ORD-{d.orderId}</Text>
+              <View key={d.deliveryId || d.id} style={styles.tableBodyRow}>
+                <Text style={[styles.tdMono, { flex: 1.2 }]}>#DLY-{d.deliveryId || d.id}</Text>
+                <Text style={[styles.tdMonoSub, { flex: 1.2 }]}>#ORD-{d.orderId || '892'}</Text>
                 <Text style={[styles.td, { flex: 2.2 }]}>{d.pickupLocation || '-'}</Text>
                 <Text style={[styles.td, { flex: 2.2 }]}>{d.deliveryLocation || '-'}</Text>
                 <View style={{ flex: 1.5 }}>
@@ -101,8 +86,12 @@ export default function DeliveriesScreen({ deliveries, onOpenAddDelivery }) {
                   </View>
                 </View>
                 <View style={[styles.actionsCell, { flex: 1 }]}>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <MaterialIcons name="more-vert" size={20} color={colors.onSurfaceVariant} />
+                  <TouchableOpacity
+                    style={[styles.actionBtn, styles.actionBtnDanger]}
+                    onPress={() => onCancelDelivery && onCancelDelivery(d.deliveryId || d.id)}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons name="cancel" size={18} color={colors.error} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -242,6 +231,10 @@ const styles = StyleSheet.create({
   actionBtn: {
     padding: 6,
     borderRadius: 6,
+    backgroundColor: colors.surfaceContainerHigh,
+  },
+  actionBtnDanger: {
+    backgroundColor: colors.errorContainer,
   },
   emptyRow: {
     padding: 24,

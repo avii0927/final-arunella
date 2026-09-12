@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import KpiCard from '../components/KpiCard';
 
-export default function ProductsScreen({ crops, onOpenAddProduct }) {
+export default function ProductsScreen({ crops, onDeleteProduct }) {
   const totalCropsCount = crops.length;
   const nearingExpiryCount = crops.filter((c) => c.status === 'Nearing Expiry').length || 42;
   const lowStockCount = crops.filter((c) => c.status === 'Low Stock').length || 18;
@@ -16,16 +16,6 @@ export default function ProductsScreen({ crops, onOpenAddProduct }) {
         <View>
           <Text style={styles.pageTitle}>Product Management</Text>
           <Text style={styles.subtitle}>Monitor stock, pricing, and expiry across all listings.</Text>
-        </View>
-        <View style={styles.btnGroup}>
-          <TouchableOpacity style={styles.exportBtn} activeOpacity={0.7}>
-            <MaterialIcons name="file-download" size={18} color={colors.onSurface} style={{ marginRight: 6 }} />
-            <Text style={styles.exportBtnText}>Export</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addBtn} onPress={onOpenAddProduct} activeOpacity={0.8}>
-            <MaterialIcons name="add" size={18} color={colors.onPrimary} style={{ marginRight: 6 }} />
-            <Text style={styles.addBtnText}>Add Listing</Text>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -62,8 +52,8 @@ export default function ProductsScreen({ crops, onOpenAddProduct }) {
             const isWarning = crop.status === 'Nearing Expiry';
             const isError = crop.status === 'Low Stock';
             return (
-              <View key={crop.productId} style={styles.tableBodyRow}>
-                <Text style={[styles.tdMono, { flex: 1.2 }]}>#PROD-{crop.productId}</Text>
+              <View key={crop.productId || crop.id} style={styles.tableBodyRow}>
+                <Text style={[styles.tdMono, { flex: 1.2 }]}>#PROD-{crop.productId || crop.id}</Text>
                 <Text style={[styles.tdBold, { flex: 2 }]}>{crop.productName}</Text>
                 <Text style={[styles.tdSub, { flex: 1.2 }]}>{crop.stock || '-'}</Text>
                 <Text style={[styles.td, { flex: 1.5 }]}>{crop.pricePerKg || '-'}</Text>
@@ -89,8 +79,12 @@ export default function ProductsScreen({ crops, onOpenAddProduct }) {
                   </View>
                 </View>
                 <View style={[styles.actionsCell, { flex: 1 }]}>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <MaterialIcons name="more-vert" size={20} color={colors.onSurfaceVariant} />
+                  <TouchableOpacity
+                    style={[styles.actionBtn, styles.actionBtnDanger]}
+                    onPress={() => onDeleteProduct && onDeleteProduct(crop.productId || crop.id)}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons name="delete" size={18} color={colors.error} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -256,6 +250,10 @@ const styles = StyleSheet.create({
   actionBtn: {
     padding: 6,
     borderRadius: 6,
+    backgroundColor: colors.surfaceContainerHigh,
+  },
+  actionBtnDanger: {
+    backgroundColor: colors.errorContainer,
   },
   emptyRow: {
     padding: 24,
