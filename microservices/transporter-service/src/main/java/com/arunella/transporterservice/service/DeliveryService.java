@@ -42,11 +42,13 @@ public class DeliveryService {
     public Delivery updateDelivery(Long id, Delivery deliveryData) {
         Delivery existing = deliveryRepository.findById(id).orElse(null);
         if (existing != null) {
-            existing.setPickupLocation(deliveryData.getPickupLocation());
-            existing.setDeliveryLocation(deliveryData.getDeliveryLocation());
-            existing.setStatus(deliveryData.getStatus());
-            existing.setConfirmationImg(deliveryData.getConfirmationImg());
-            existing.setDate(deliveryData.getDate());
+            if (deliveryData.getPickupLocation() != null) existing.setPickupLocation(deliveryData.getPickupLocation());
+            if (deliveryData.getDeliveryLocation() != null) existing.setDeliveryLocation(deliveryData.getDeliveryLocation());
+            if (deliveryData.getStatus() != null) existing.setStatus(deliveryData.getStatus());
+            if (deliveryData.getConfirmationImg() != null) existing.setConfirmationImg(deliveryData.getConfirmationImg());
+            if (deliveryData.getDate() != null) existing.setDate(deliveryData.getDate());
+            if (deliveryData.getTransporter() != null) existing.setTransporter(deliveryData.getTransporter());
+            if (deliveryData.getOrderId() != null) existing.setOrderId(deliveryData.getOrderId());
             return deliveryRepository.save(existing);
         }
         return null;

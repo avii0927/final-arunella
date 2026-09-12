@@ -5,6 +5,10 @@ import { colors } from '../theme/colors';
 import KpiCard from '../components/KpiCard';
 
 export default function OverviewScreen({ farmers, crops, deliveries, recentCrops, activityFeed, onNavigateTab }) {
+  const activeListingsCount = crops.filter(
+    (c) => !c.status || c.status.toLowerCase().includes('active')
+  ).length;
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
@@ -17,27 +21,27 @@ export default function OverviewScreen({ farmers, crops, deliveries, recentCrops
       <View style={styles.kpiGrid}>
         <KpiCard
           title="Total Farmers"
-          value={farmers.length || 142}
+          value={farmers.length}
           iconName="group"
           iconBg={colors.actionBlue}
         />
         <KpiCard
-          title="Total Orders"
-          value="892"
-          iconName="shopping-cart"
+          title="Crop Listings"
+          value={crops.length}
+          iconName="eco"
+          iconBg={colors.primaryContainer}
+        />
+        <KpiCard
+          title="Active Listings"
+          value={activeListingsCount}
+          iconName="inventory-2"
           iconBg={colors.userTan}
         />
         <KpiCard
           title="Deliveries"
-          value={deliveries.length || 312}
+          value={deliveries.length}
           iconName="local-shipping"
           iconBg={colors.secondaryContainer}
-        />
-        <KpiCard
-          title="Crop Listings"
-          value={crops.length || 64}
-          iconName="eco"
-          iconBg={colors.primaryContainer}
         />
       </View>
 

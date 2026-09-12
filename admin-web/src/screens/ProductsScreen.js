@@ -6,8 +6,15 @@ import KpiCard from '../components/KpiCard';
 
 export default function ProductsScreen({ crops, onDeleteProduct }) {
   const totalCropsCount = crops.length;
-  const nearingExpiryCount = crops.filter((c) => c.status === 'Nearing Expiry').length || 42;
-  const lowStockCount = crops.filter((c) => c.status === 'Low Stock').length || 18;
+  const activeCount = crops.filter(
+    (c) => !c.status || c.status.toLowerCase().includes('active')
+  ).length;
+  const nearingExpiryCount = crops.filter(
+    (c) => c.status && c.status.toLowerCase().includes('expir')
+  ).length;
+  const lowStockCount = crops.filter(
+    (c) => c.status && c.status.toLowerCase().includes('low')
+  ).length;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -22,9 +29,9 @@ export default function ProductsScreen({ crops, onDeleteProduct }) {
       {/* KPI Row */}
       <View style={styles.kpiRow}>
         <KpiCard title="Total Listings" value={totalCropsCount} />
+        <KpiCard title="Active Listings" value={activeCount} />
         <KpiCard title="Nearing Expiry" value={nearingExpiryCount} valueColor={colors.warning} />
         <KpiCard title="Low Stock" value={lowStockCount} valueColor={colors.error} />
-        <KpiCard title="Avg Price / KG" value="LKR 240" />
       </View>
 
       {/* Inventory Details Table */}

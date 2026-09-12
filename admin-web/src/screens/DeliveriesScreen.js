@@ -5,7 +5,22 @@ import { colors } from '../theme/colors';
 import KpiCard from '../components/KpiCard';
 
 export default function DeliveriesScreen({ deliveries, onCancelDelivery }) {
-  const activeShipmentsCount = deliveries.filter((d) => d.status !== 'Delivered').length;
+  const totalDeliveriesCount = deliveries.length;
+  const inTransitCount = deliveries.filter(
+    (d) =>
+      d.status &&
+      (d.status.toLowerCase().includes('transit') ||
+        d.status.toLowerCase().includes('in_transit'))
+  ).length;
+  const deliveredCount = deliveries.filter(
+    (d) => d.status && d.status.toLowerCase().includes('deliver')
+  ).length;
+  const activeShipmentsCount = deliveries.filter(
+    (d) =>
+      !d.status ||
+      (!d.status.toLowerCase().includes('deliver') &&
+        !d.status.toLowerCase().includes('cancel'))
+  ).length;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -20,21 +35,20 @@ export default function DeliveriesScreen({ deliveries, onCancelDelivery }) {
       {/* KPI Cards */}
       <View style={styles.kpiRow}>
         <KpiCard
+          title="Total Shipments"
+          value={totalDeliveriesCount}
+        />
+        <KpiCard
           title="Active Shipments"
-          value={activeShipmentsCount || 128}
+          value={activeShipmentsCount}
         />
         <KpiCard
           title="In Transit"
-          value="842"
+          value={inTransitCount}
         />
         <KpiCard
-          title="Delivered Today"
-          value="312"
-        />
-        <KpiCard
-          title="Alerts"
-          value="07"
-          valueColor={colors.error}
+          title="Delivered"
+          value={deliveredCount}
         />
       </View>
 

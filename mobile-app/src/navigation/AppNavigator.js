@@ -24,6 +24,9 @@ import BuyerOrdersScreen from '../screens/buyer/BuyerOrdersScreen';
 
 // Transporter screens
 import TransporterHomeScreen from '../screens/transporter/TransporterHomeScreen';
+import TransporterPendingOrdersScreen from '../screens/transporter/TransporterPendingOrdersScreen';
+import TransporterHistoryScreen from '../screens/transporter/TransporterHistoryScreen';
+import DeliveryDetailScreen from '../screens/transporter/DeliveryDetailScreen';
 
 // Shared screens
 import ProfileScreen from '../screens/shared/ProfileScreen';
@@ -50,8 +53,8 @@ const TermsScreen = (props) => <PlaceholderScreen {...props} title="Terms & Priv
 const ProductDetailScreen = (props) => <PlaceholderScreen {...props} title="Product Detail" emoji="🛒" color={Colors.buyer} />;
 const OrderTrackingScreen = (props) => <PlaceholderScreen {...props} title="Track Order" emoji="🗺️" color={Colors.buyer} />;
 const OrderSuccessScreen = (props) => <PlaceholderScreen {...props} title="Order Placed! 🎉" emoji="✅" color={Colors.success} />;
-const DeliveryDetailScreen = (props) => <PlaceholderScreen {...props} title="Delivery Detail" emoji="📦" color={Colors.transporter} />;
 const UpdateDeliveryScreen = (props) => <PlaceholderScreen {...props} title="Update Delivery" emoji="📍" color={Colors.transporter} />;
+
 
 // ─── Farmer Tab Navigator ─────────────────────────────────────────────
 const FarmerTabNavigator = () => (
@@ -188,11 +191,19 @@ const TransporterTabNavigator = () => (
       }}
     />
     <Tab.Screen
-      name="History"
-      component={HistoryScreen}
+      name="PendingOrders"
+      component={TransporterPendingOrdersScreen}
+      options={{
+        tabBarLabel: 'Pending',
+        tabBarIcon: ({ color, focused }) => <TabIcon emoji="📋" color={color} focused={focused} />,
+      }}
+    />
+    <Tab.Screen
+      name="TransporterHistory"
+      component={TransporterHistoryScreen}
       options={{
         tabBarLabel: 'History',
-        tabBarIcon: ({ color, focused }) => <TabIcon emoji="📋" color={color} focused={focused} />,
+        tabBarIcon: ({ color, focused }) => <TabIcon emoji="📜" color={color} focused={focused} />,
       }}
     />
     <Tab.Screen

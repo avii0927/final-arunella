@@ -93,8 +93,13 @@ export default function App() {
       const payload = {
         name: userObj.name,
         email: userObj.email,
-        nic: userObj.extraField || '990000000V',
-        district: userObj.location || 'Colombo',
+        password: userObj.password || 'pass123',
+        nic: userObj.nic || '990000000V',
+        contactNo: userObj.contactNo || '0771234567',
+        district: userObj.district || 'Colombo',
+        location: userObj.location || 'Colombo',
+        bankAccountNo: userObj.bankAccountNo || '',
+        role: 'FARMER',
       };
       if (dbConnected) {
         try {
@@ -110,8 +115,13 @@ export default function App() {
       const payload = {
         name: userObj.name,
         email: userObj.email,
-        businessRegNo: userObj.extraField || 'PV-99999',
-        marketLocation: userObj.location || 'Colombo',
+        password: userObj.password || 'pass123',
+        nic: userObj.nic || '990000000V',
+        contactNo: userObj.contactNo || '0771234567',
+        district: userObj.district || 'Colombo',
+        businessRegNo: userObj.businessRegNo || 'PV-99999',
+        marketLocation: userObj.marketLocation || 'Colombo',
+        role: 'BUYER',
       };
       if (dbConnected) {
         try {
@@ -127,8 +137,13 @@ export default function App() {
       const payload = {
         name: userObj.name,
         email: userObj.email,
-        vehiclePlateNo: userObj.extraField || 'WP-9999',
-        maxCapacity: userObj.location || '5000 kg',
+        password: userObj.password || 'pass123',
+        nic: userObj.nic || '990000000V',
+        contactNo: userObj.contactNo || '0771234567',
+        district: userObj.district || 'Colombo',
+        vehiclePlateNo: userObj.vehiclePlateNo || 'WP-9999',
+        maxCapacity: parseFloat(userObj.maxCapacity) || 5000,
+        role: 'TRANSPORTER',
       };
       if (dbConnected) {
         try {

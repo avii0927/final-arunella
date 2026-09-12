@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  Image,
+  ImageBackground,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import { apiService } from '../services/apiService';
+import loginBg from '../../assets/login-bg.jpg';
 
 export default function LoginScreen({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -53,131 +54,121 @@ export default function LoginScreen({ onLogin }) {
     }
   };
 
-  const handleFillDemo = () => {
-    setEmail('admin@arunella.lk');
-    setPassword('admin123');
-    setErrorMessage('');
-  };
-
   return (
-    <View style={styles.background}>
-      <View style={styles.loginCard}>
-        {/* Brand Header */}
-        <View style={styles.brandSection}>
-          <View style={styles.logoBadge}>
-            <MaterialIcons name="eco" size={32} color={colors.onPrimaryContainer} />
+    <ImageBackground source={loginBg} style={styles.background} resizeMode="cover">
+      <View style={styles.overlay}>
+        <View style={styles.loginCard}>
+          {/* Brand Header */}
+          <View style={styles.brandSection}>
+            <View style={styles.logoBadge}>
+              <MaterialIcons name="eco" size={32} color={colors.onPrimaryContainer} />
+            </View>
+            <Text style={styles.brandTitle}>Arunella</Text>
+            <Text style={styles.brandSubtitle}>Admin Console Access</Text>
           </View>
-          <Text style={styles.brandTitle}>Arunella</Text>
-          <Text style={styles.brandSubtitle}>Admin Console Access</Text>
-        </View>
 
-        <Text style={styles.welcomeTitle}>Sign in to your account</Text>
-        <Text style={styles.welcomeSub}>
-          Enter your administrative credentials to access real-time network monitoring and logistics.
-        </Text>
+          <Text style={styles.welcomeTitle}>Sign in to your account</Text>
+          <Text style={styles.welcomeSub}>
+            Enter your administrative credentials to access real-time network monitoring and logistics.
+          </Text>
 
-        {/* Error Alert */}
-        {!!errorMessage && (
-          <View style={styles.errorBanner}>
-            <MaterialIcons name="error-outline" size={18} color={colors.error} style={{ marginRight: 6 }} />
-            <Text style={styles.errorText}>{errorMessage}</Text>
-          </View>
-        )}
+          {/* Error Alert */}
+          {!!errorMessage && (
+            <View style={styles.errorBanner}>
+              <MaterialIcons name="error-outline" size={18} color={colors.error} style={{ marginRight: 6 }} />
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          )}
 
-        {/* Form Inputs */}
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Email Address</Text>
-          <View style={styles.inputWrapper}>
-            <MaterialIcons name="email" size={20} color={colors.onSurfaceVariant} style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="admin@arunella.lk"
-              placeholderTextColor={colors.onSurfaceVariant}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              returnKeyType="next"
-              onSubmitEditing={handleSubmit}
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.inputWrapper}>
-            <MaterialIcons name="lock" size={20} color={colors.onSurfaceVariant} style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor={colors.onSurfaceVariant}
-              secureTextEntry={!showPassword}
-              returnKeyType="go"
-              onSubmitEditing={handleSubmit}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
-              <MaterialIcons
-                name={showPassword ? 'visibility' : 'visibility-off'}
-                size={20}
-                color={colors.onSurfaceVariant}
+          {/* Form Inputs */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Email Address</Text>
+            <View style={styles.inputWrapper}>
+              <MaterialIcons name="email" size={20} color={colors.onSurfaceVariant} style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="admin@arunella.lk"
+                placeholderTextColor={colors.onSurfaceVariant}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                returnKeyType="next"
+                onSubmitEditing={handleSubmit}
+                value={email}
+                onChangeText={setEmail}
               />
+            </View>
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Password</Text>
+            <View style={styles.inputWrapper}>
+              <MaterialIcons name="lock" size={20} color={colors.onSurfaceVariant} style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="••••••••"
+                placeholderTextColor={colors.onSurfaceVariant}
+                secureTextEntry={!showPassword}
+                returnKeyType="go"
+                onSubmitEditing={handleSubmit}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
+                <MaterialIcons
+                  name={showPassword ? 'visibility' : 'visibility-off'}
+                  size={20}
+                  color={colors.onSurfaceVariant}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Options Row */}
+          <View style={styles.optionsRow}>
+            <TouchableOpacity
+              style={styles.rememberRow}
+              onPress={() => setRememberMe(!rememberMe)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+                {rememberMe && <MaterialIcons name="check" size={14} color={colors.onPrimary} />}
+              </View>
+              <Text style={styles.rememberText}>Remember this session</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.7}>
+              <Text style={styles.forgotText}>Forgot password?</Text>
             </TouchableOpacity>
           </View>
-        </View>
 
-        {/* Options Row */}
-        <View style={styles.optionsRow}>
+          {/* Sign In Button */}
           <TouchableOpacity
-            style={styles.rememberRow}
-            onPress={() => setRememberMe(!rememberMe)}
-            activeOpacity={0.7}
+            style={[styles.signInBtn, loading && styles.signInBtnLoading]}
+            onPress={handleSubmit}
+            disabled={loading}
+            activeOpacity={0.8}
           >
-            <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-              {rememberMe && <MaterialIcons name="check" size={14} color={colors.onPrimary} />}
-            </View>
-            <Text style={styles.rememberText}>Remember this session</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity activeOpacity={0.7}>
-            <Text style={styles.forgotText}>Forgot password?</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Sign In Button */}
-        <TouchableOpacity
-          style={[styles.signInBtn, loading && styles.signInBtnLoading]}
-          onPress={handleSubmit}
-          disabled={loading}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.signInBtnText}>
-            {loading ? 'Authenticating...' : 'Sign In to Console'}
-          </Text>
-          {!loading && <MaterialIcons name="arrow-forward" size={18} color={colors.onPrimary} style={{ marginLeft: 8 }} />}
-        </TouchableOpacity>
-
-        {/* Demo Helper Box */}
-        <View style={styles.demoBox}>
-          <View style={styles.demoHeader}>
-            <MaterialIcons name="info" size={16} color={colors.primary} style={{ marginRight: 4 }} />
-            <Text style={styles.demoTitle}>Quick Demo Access</Text>
-          </View>
-          <Text style={styles.demoText}>Pre-loaded with admin credentials for preview.</Text>
-          <TouchableOpacity style={styles.demoFillBtn} onPress={handleFillDemo} activeOpacity={0.7}>
-            <Text style={styles.demoFillBtnText}>Auto-fill Admin Credentials</Text>
+            <Text style={styles.signInBtnText}>
+              {loading ? 'Authenticating...' : 'Sign In to Console'}
+            </Text>
+            {!loading && <MaterialIcons name="arrow-forward" size={18} color={colors.onPrimary} style={{ marginLeft: 8 }} />}
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: colors.background,
+    width: '100%',
+    height: '100%',
+    minHeight: Platform.OS === 'web' ? '100vh' : '100%',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 15, 0.45)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -186,14 +177,15 @@ const styles = StyleSheet.create({
   loginCard: {
     width: 440,
     maxWidth: '100%',
-    backgroundColor: colors.surfaceContainerLowest,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 20,
     padding: 32,
     borderWidth: 1,
-    borderColor: colors.outlineVariant,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
     ...Platform.select({
       web: {
-        boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.06)',
+        boxShadow: '0px 15px 35px rgba(0, 0, 0, 0.2)',
+        backdropFilter: 'blur(10px)',
       },
     }),
   },
@@ -321,7 +313,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 9999,
     paddingVertical: 12,
-    marginBottom: 24,
   },
   signInBtnLoading: {
     opacity: 0.7,
@@ -331,39 +322,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.onPrimary,
   },
-  demoBox: {
-    backgroundColor: colors.surfaceContainerLow,
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: colors.outlineVariant,
-    alignItems: 'center',
-  },
-  demoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  demoTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  demoText: {
-    fontSize: 12,
-    color: colors.onSurfaceVariant,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  demoFillBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 9999,
-    backgroundColor: colors.secondaryContainer,
-  },
-  demoFillBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.onSecondaryContainer,
-  },
 });
+
