@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: arunella-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: arunella_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database_migrations.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./dummy_data.sql:/docker-entrypoint-initdb.d/2_data.sql
+
+  buyer-service:
+    build: ./microservices/buyer-service
+    container_name: buyer-service
+    ports:
+      - "8082:8082"
+    environment:
+      DB_URL: jdbc:mysql://mysql-db:3306/arunella_db?useSSL=false&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql-db
+
+  transporter-service:
+    build: ./microservices/transporter-service
+    container_name: transporter-service
+    ports:
+      - "8083:8083"
+    environment:
+      DB_URL: jdbc:mysql://mysql-db:3306/arunella_db?useSSL=false&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql-db
+
+  farmer-service:
+    build: ./microservices/farmer-service
+    container_name: farmer-service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_URL: jdbc:mysql://mysql-db:3306/arunella_db?useSSL=false&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql-db
