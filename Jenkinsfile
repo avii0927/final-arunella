@@ -53,8 +53,8 @@ pipeline {
         stage('Deploy Microservices') { 
             steps { 
                 echo 'Cleaning up existing containers and deploying with Docker Compose...'
-                bat 'docker rm -f arunella-mysql buyer-service farmer-service transporter-service 2>nul || echo Containers cleaned'
-                bat 'docker compose down --remove-orphans || echo Compose down finished'
+                bat 'docker rm -f arunella-mysql buyer-service farmer-service transporter-service 2>nul || ver > nul'
+                bat 'docker compose down --remove-orphans || ver > nul'
                 bat 'docker compose up -d'
             } 
         } 
