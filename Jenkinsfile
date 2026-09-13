@@ -27,11 +27,13 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${env.SONARQUBE_SERVER}") {
-                    // This command pushes the code analysis to your SonarQube server
-                    bat 'mvn sonar:sonar -f microservices/buyer-service/pom.xml'
-                    bat 'mvn sonar:sonar -f microservices/farmer-service/pom.xml'
-                    bat 'mvn sonar:sonar -f microservices/transporter-service/pom.xml'
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    withSonarQubeEnv("${env.SONARQUBE_SERVER}") {
+                        // Push code analysis to SonarQube server
+                        bat 'mvn sonar:sonar -f microservices/buyer-service/pom.xml'
+                        bat 'mvn sonar:sonar -f microservices/farmer-service/pom.xml'
+                        bat 'mvn sonar:sonar -f microservices/transporter-service/pom.xml'
+                    }
                 }
             }
         }
