@@ -18,13 +18,13 @@ import { useAuth } from '../../context/AuthContext';
 // ── Crop Emoji Helper ────────────────────────────────────────────────
 const getCropEmoji = (name = '') => {
   const n = name.toLowerCase();
-  if (n.includes('onion'))   return '🧅';
+  if (n.includes('onion')) return '🧅';
   if (n.includes('cabbage')) return '🥬';
-  if (n.includes('tomato'))  return '🍅';
-  if (n.includes('carrot'))  return '🥕';
-  if (n.includes('potato'))  return '🥔';
+  if (n.includes('tomato')) return '🍅';
+  if (n.includes('carrot')) return '🥕';
+  if (n.includes('potato')) return '🥔';
   if (n.includes('chilli') || n.includes('pepper')) return '🌶️';
-  if (n.includes('rice'))    return '🍚';
+  if (n.includes('rice')) return '🍚';
   return '🌾';
 };
 
@@ -40,14 +40,13 @@ const CropCard = ({ crop, navigation }) => {
         <View>
           <Text style={[Typography.h4, { color: Colors.textPrimary }]}>{crop.productName}</Text>
           <Text style={[Typography.body2, { color: Colors.textSecondary }]}>{crop.stock} kg available</Text>
-          <Text style={[Typography.caption, { color: Colors.textMuted }]}>Min price: Rs. {crop.minPrice}/kg</Text>
+          <Text style={[Typography.caption, { color: Colors.textMuted }]}>Added: {crop.uploadedDate || 'Recently'}</Text>
         </View>
       </View>
       <View style={{ alignItems: 'flex-end' }}>
-        <Text style={[Typography.body1, { color: Colors.primary, fontWeight: '700', marginBottom: 6 }]}>
+        <Text style={[Typography.body1, { color: Colors.primary, fontWeight: '700' }]}>
           Rs. {crop.pricePerKg}/kg
         </Text>
-        <StatusBadge status={crop.status?.toLowerCase()} />
       </View>
     </TouchableOpacity>
   );
@@ -62,18 +61,11 @@ const cropCardStyles = StyleSheet.create({
 const FarmerHomeScreen = ({ navigation }) => {
   const { user } = useAuth();
   const FARMER_ID = user?.userId ?? 1;
-  const [farmer, setFarmer]       = useState(null);
-  const [crops, setCrops]         = useState([]);
-  const [orders, setOrders]       = useState([]);
-  const [loading, setLoading]     = useState(true);
+  const [farmer, setFarmer] = useState(null);
+  const [crops, setCrops] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
-  const greeting = (() => {
-    const h = new Date().getHours();
-    if (h < 12) return 'Good Morning';
-    if (h < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  })();
 
   const fetchData = useCallback(async () => {
     try {
@@ -109,23 +101,18 @@ const FarmerHomeScreen = ({ navigation }) => {
     if (!loading) fetchData();
   }, [loading, fetchData]);
 
-  const goToAddCrop    = useCallback(() => navigation.navigate('AddCrop'),          [navigation]);
-  const goToMyCrops    = useCallback(() => navigation.navigate('MyCrops'),           [navigation]);
-  const goToFarmerOrders = useCallback(() => navigation.navigate('FarmerOrders'),   [navigation]);
+  const goToAddCrop = useCallback(() => navigation.navigate('AddCrop'), [navigation]);
+  const goToMyCrops = useCallback(() => navigation.navigate('MyCrops'), [navigation]);
+  const goToFarmerOrders = useCallback(() => navigation.navigate('FarmerOrders'), [navigation]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', handleFocus);
     return unsubscribe;
   }, [navigation, handleFocus]);
 
-  const activeCrops   = crops.filter(c => c.status === 'AVAILABLE').length;
-  const pendingOrders = orders.filter(o => o.status === 'PENDING').length;
-
   const statCards = [
-    { label: 'Active Listings', value: String(activeCrops),      icon: '🌾', color: Colors.primary },
-    { label: 'Pending Orders',  value: String(pendingOrders),     icon: '📦', color: Colors.warning },
-    { label: 'Total Crops',     value: String(crops.length),      icon: '📈', color: Colors.success },
-    { label: 'Farmer Rating',   value: farmer ? `${farmer.rating}⭐` : '—', icon: '⭐', color: Colors.buyer },
+    { label: 'Total Crops', value: String(crops.length), icon: '📈', color: Colors.success },
+    { label: 'Farmer Rating', value: farmer ? `${farmer.rating}⭐` : '—', icon: '⭐', color: Colors.buyer },
   ];
 
   if (loading) {
@@ -147,7 +134,6 @@ const FarmerHomeScreen = ({ navigation }) => {
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <View>
-            <Text style={styles.greeting}>{greeting} 🌅</Text>
             <Text style={styles.farmerName}>{farmer?.name || 'Farmer'}</Text>
             <View style={styles.locationBadge}>
               <Text style={styles.locationText}>📍 {farmer?.district || '—'}</Text>
@@ -180,7 +166,7 @@ const FarmerHomeScreen = ({ navigation }) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-          onRefresh={handleRefresh}
+            onRefresh={handleRefresh}
             colors={[Colors.primary]}
           />
         }
@@ -235,7 +221,6 @@ const FarmerHomeScreen = ({ navigation }) => {
               <Card key={order.orderId} style={styles.orderCard}>
                 <View style={styles.orderHeader}>
                   <Text style={[Typography.label, { color: Colors.textMuted }]}>ORD-{order.orderId}</Text>
-                  <StatusBadge status={order.status?.toLowerCase()} />
                 </View>
                 <View style={styles.orderDetails}>
                   <Text style={[Typography.body2, { color: Colors.textSecondary }]}>
@@ -290,7 +275,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 100 },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: Spacing.lg },
   statCard: {
-    flex: 1, minWidth: '44%',
+    width: '47%',
     backgroundColor: Colors.white,
     borderRadius: Radii.lg,
     padding: Spacing.md,

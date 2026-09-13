@@ -125,7 +125,6 @@ const BuyerOrdersScreen = ({ navigation }) => {
                     <Text style={[Typography.label, { color: Colors.textMuted }]}>ORD-{order.orderId}</Text>
                     <Text style={[Typography.caption, { color: Colors.textSecondary }]}>{order.date}</Text>
                   </View>
-                  <StatusBadge status={statusLow} />
                 </View>
 
                 {/* Product */}
@@ -137,6 +136,9 @@ const BuyerOrdersScreen = ({ navigation }) => {
                     <Text style={[Typography.h4, { color: Colors.textPrimary }]}>Order #{order.orderId}</Text>
                     <Text style={[Typography.body2, { color: Colors.textSecondary }]}>
                       Quantity: {order.quantity} kg
+                    </Text>
+                    <Text style={[Typography.caption, { color: Colors.textMuted }]}>
+                      Product ID: #{order.productId || 101} · Farmer ID: #{order.farmerId || 1}
                     </Text>
                     <Text style={[Typography.caption, { color: Colors.textMuted }]}>
                       Placed on {order.date}
@@ -162,8 +164,8 @@ const BuyerOrdersScreen = ({ navigation }) => {
                 )}
 
                 {/* Actions */}
-                <View style={styles.cardActions}>
-                  {order.status === 'PENDING' && (
+                {order.status === 'PENDING' && (
+                  <View style={styles.cardActions}>
                     <Button
                       title="Cancel Order"
                       variant="secondary"
@@ -172,11 +174,8 @@ const BuyerOrdersScreen = ({ navigation }) => {
                       style={{ flex: 1 }}
                       onPress={() => Alert.alert('Cancel', 'Cancel order feature coming soon.')}
                     />
-                  )}
-                  <TouchableOpacity style={styles.detailBtn}>
-                    <Text style={[Typography.body2, { color: Colors.textSecondary }]}>Details ›</Text>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                )}
               </TouchableOpacity>
             );
           })

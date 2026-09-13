@@ -145,16 +145,19 @@ export const Card = ({ children, style, onPress }) => {
 
 // ─── Badge / Status Chip ─────────────────────────────────────────────
 export const StatusBadge = ({ status, style }) => {
+  const normalized = (status || '').toLowerCase().replace('_', '-');
   const statusMap = {
     active: { label: 'Active', bg: '#E8F5EB', text: Colors.primary },
     pending: { label: 'Pending', bg: '#FFF7E6', text: Colors.warning },
+    confirmed: { label: 'Confirmed', bg: '#E8F5EB', text: Colors.farmer },
+    shipped: { label: 'Shipped', bg: '#E3F0FF', text: Colors.buyer },
+    'in-transit': { label: 'Shipped', bg: '#E3F0FF', text: Colors.buyer },
     delivered: { label: 'Delivered', bg: '#E8F5EB', text: Colors.success },
-    'in-transit': { label: 'In Transit', bg: '#E3F0FF', text: Colors.buyer },
     cancelled: { label: 'Cancelled', bg: '#FFF1F1', text: Colors.error },
     expired: { label: 'Expired', bg: '#F5F5F5', text: Colors.textMuted },
     available: { label: 'Available', bg: '#E8F5EB', text: Colors.primary },
   };
-  const s = statusMap[status] || statusMap.pending;
+  const s = statusMap[normalized] || statusMap[status] || statusMap.pending;
   return (
     <View style={[styles.badge, { backgroundColor: s.bg }, style]}>
       <Text style={[Typography.caption, { color: s.text, fontWeight: '600' }]}>{s.label}</Text>

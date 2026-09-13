@@ -105,13 +105,6 @@ const ProfileScreen = ({ navigation: navProp, role: roleProp = 'farmer' }) => {
         { icon: '👤', label: 'Personal Information', sub: 'Name, email, NIC, location & bank details', route: 'EditProfile' },
       ],
     },
-    {
-      section: 'Community & Legal',
-      items: [
-        ...(role === 'buyer' ? [{ icon: '⭐', label: 'Rate Farmer & Transporter', sub: 'Rate service & calculate average scores', route: 'Rating' }] : []),
-        { icon: '📄', label: 'Terms & Privacy', sub: 'Legal documents', route: 'Terms' },
-      ],
-    },
   ].filter((s) => s.items.length > 0);
 
   // ── Stable handlers ─────────────────────────────────────────────────
@@ -131,9 +124,9 @@ const ProfileScreen = ({ navigation: navProp, role: roleProp = 'farmer' }) => {
   const handleSignOut = useCallback(() => {
     logout();
     if (navigation && typeof navigation.reset === 'function') {
-      navigation.reset({ index: 0, routes: [{ name: 'Splash' }] });
+      navigation.reset({ index: 0, routes: [{ name: 'GetStarted' }] });
     } else if (navigation && typeof navigation.navigate === 'function') {
-      navigation.navigate('Splash');
+      navigation.navigate('GetStarted');
     }
   }, [navigation, logout]);
 

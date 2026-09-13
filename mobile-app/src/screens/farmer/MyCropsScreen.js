@@ -228,10 +228,9 @@ const MyCropsScreen = ({ navigation }) => {
                     Rs. {crop.pricePerKg}/kg
                   </Text>
                   <Text style={[Typography.caption, { color: Colors.textMuted }]}>
-                    Min price: Rs. {crop.minPrice}/kg  ·  Stock: {crop.stock} kg
+                    Stock: {crop.stock} kg
                   </Text>
                 </View>
-                <StatusBadge status={crop.status?.toLowerCase()} />
               </View>
 
               {/* Action Buttons */}

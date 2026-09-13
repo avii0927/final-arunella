@@ -38,10 +38,13 @@ public class OrderService {
     public Order updateOrder(Long id, Order orderData) {
         Order existing = orderRepository.findById(id).orElse(null);
         if (existing != null) {
-            existing.setPrice(orderData.getPrice());
-            existing.setQuantity(orderData.getQuantity());
-            existing.setDate(orderData.getDate());
-            existing.setStatus(orderData.getStatus());
+            if (orderData.getFarmerId() != null) existing.setFarmerId(orderData.getFarmerId());
+            if (orderData.getProductId() != null) existing.setProductId(orderData.getProductId());
+            if (orderData.getPrice() != null) existing.setPrice(orderData.getPrice());
+            if (orderData.getQuantity() != null) existing.setQuantity(orderData.getQuantity());
+            if (orderData.getDate() != null) existing.setDate(orderData.getDate());
+            if (orderData.getStatus() != null) existing.setStatus(orderData.getStatus());
+            if (orderData.getBuyer() != null) existing.setBuyer(orderData.getBuyer());
             return orderRepository.save(existing);
         }
         return null;

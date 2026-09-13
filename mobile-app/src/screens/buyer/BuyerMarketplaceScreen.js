@@ -37,6 +37,29 @@ const getCropEmoji = (name = '') => {
   return '🌾';
 };
 
+const matchesCategory = (crop, cat) => {
+  if (!cat || cat === 'All') return true;
+  if (crop.category && crop.category.toLowerCase() === cat.toLowerCase()) return true;
+
+  const name = (crop.productName || '').toLowerCase();
+  const desc = (crop.description || '').toLowerCase();
+  const text = `${name} ${desc}`;
+
+  if (cat === 'Vegetables') {
+    return /onion|cabbage|tomato|carrot|potato|leek|brinjal|eggplant|pumpkin|cucumber|chilli|chili|pepper|beet|garlic|ginger|spinach|bean|cassava|manioc|gourd|gotukola|luffa|radish|koha|vegetable/.test(text);
+  }
+  if (cat === 'Fruits') {
+    return /banana|apple|mango|papaya|pineapple|orange|lime|lemon|watermelon|avocado|passion|guava|rambutan|durian|fruit/.test(text);
+  }
+  if (cat === 'Grains') {
+    return /rice|paddy|maize|corn|wheat|millet|kurakkan|barley|grain|dal|dhal|pulse|gram/.test(text);
+  }
+  if (cat === 'Spices') {
+    return /chilli|chili|pepper|cardamom|cinnamon|clove|nutmeg|turmeric|mustard|curry|ginger|vanilla|spice/.test(text);
+  }
+  return true;
+};
+
 const BuyerMarketplaceScreen = ({ navigation }) => {
   const { user } = useAuth();
   const [search, setSearch]         = useState('');
@@ -66,9 +89,20 @@ const BuyerMarketplaceScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation, fetchCrops, loading]);
 
-  const filtered = listings.filter((l) =>
-    l.productName?.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = listings.filter((l) => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch = !q || [
+      l.productName,
+      l.description,
+      l.category,
+      l.farmer?.name,
+      l.farmer?.district,
+      l.farmer?.location,
+    ].some((field) => field && String(field).toLowerCase().includes(q));
+
+    const matchesCat = matchesCategory(l, selectedCat);
+    return matchesSearch && matchesCat;
+  });
 
   if (loading) {
     return (
@@ -89,7 +123,6 @@ const BuyerMarketplaceScreen = ({ navigation }) => {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View>
-            <Text style={styles.greeting}>Good Morning 🌅</Text>
             <Text style={styles.name}>{user?.name ? `Hi, ${user.name.split(' ')[0]}!` : 'Fresh Marketplace'}</Text>
           </View>
           <View style={styles.cartBtn}>
@@ -124,8 +157,7 @@ const BuyerMarketplaceScreen = ({ navigation }) => {
         {/* Quick stats */}
         <View style={styles.statsRow}>
           {[
-            { label: 'Available',    val: String(listings.length), icon: '🥬' },
-            { label: 'Direct Farms', val: '—',                     icon: '👨‍🌾' },
+            { label: 'Available Crops', val: String(listings.length), icon: '🥬' },
           ].map((s) => (
             <View key={s.label} style={[styles.miniStat, Shadows.sm]}>
               <Text style={{ fontSize: 22, marginBottom: 4 }}>{s.icon}</Text>
@@ -202,18 +234,10 @@ const BuyerMarketplaceScreen = ({ navigation }) => {
                       Stock: {item.stock} kg
                     </Text>
                   </View>
-                  <View style={styles.freshBadge}>
-                    <Text style={[Typography.caption, { color: Colors.success, fontWeight: '700' }]}>
-                      ✓ {item.status}
-                    </Text>
-                  </View>
                   <View style={styles.priceRow}>
                     <View>
                       <Text style={[Typography.h4, { color: Colors.buyer, fontWeight: '800' }]}>
                         Rs. {item.pricePerKg}/kg
-                      </Text>
-                      <Text style={[Typography.caption, { color: Colors.textMuted }]}>
-                        Min: Rs. {item.minPrice}/kg
                       </Text>
                     </View>
                   </View>

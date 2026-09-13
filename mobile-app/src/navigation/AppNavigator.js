@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Colors, Typography, Radii, Shadows } from '../theme';
 
 // Auth screens
-import SplashScreen from '../screens/auth/SplashScreen';
+import GetStartedScreen from '../screens/auth/GetStartedScreen';
 import RoleSelectScreen from '../screens/auth/RoleSelectScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 
@@ -228,7 +228,7 @@ const TabIcon = ({ emoji, color, focused }) => (
 const AppNavigator = () => (
   <NavigationContainer>
     <Stack.Navigator
-      initialRouteName="Splash"
+      initialRouteName="GetStarted"
       screenOptions={{
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
@@ -237,7 +237,7 @@ const AppNavigator = () => (
       }}
     >
       {/* Auth Flow */}
-      <Stack.Screen name="Splash" component={SplashScreen} />
+      <Stack.Screen name="GetStarted" component={GetStartedScreen} />
       <Stack.Screen name="RoleSelect" component={RoleSelectScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
 

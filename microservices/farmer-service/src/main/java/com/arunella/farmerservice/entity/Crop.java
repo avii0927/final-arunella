@@ -23,15 +23,11 @@ public class Crop {
     private String status;
     private LocalDate uploadedDate;
     private LocalDate expDate;
-    private BigDecimal minPrice;
     private String description;
-
-    @Lob
-    private byte[] image;
 
     public Crop() {}
 
-    public Crop(Long productId, String productName, Farmer farmer, BigDecimal pricePerKg, Integer stock, String status, LocalDate uploadedDate, LocalDate expDate, BigDecimal minPrice, String description, byte[] image) {
+    public Crop(Long productId, String productName, Farmer farmer, BigDecimal pricePerKg, Integer stock, String status, LocalDate uploadedDate, LocalDate expDate, String description) {
         this.productId = productId;
         this.productName = productName;
         this.farmer = farmer;
@@ -40,9 +36,7 @@ public class Crop {
         this.status = status;
         this.uploadedDate = uploadedDate;
         this.expDate = expDate;
-        this.minPrice = minPrice;
         this.description = description;
-        this.image = image;
     }
 
     public Long getProductId() { return productId; }
@@ -69,12 +63,6 @@ public class Crop {
     public LocalDate getExpDate() { return expDate; }
     public void setExpDate(LocalDate expDate) { this.expDate = expDate; }
 
-    public BigDecimal getMinPrice() { return minPrice; }
-    public void setMinPrice(BigDecimal minPrice) { this.minPrice = minPrice; }
-
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-
-    public byte[] getImage() { return image; }
-    public void setImage(byte[] image) { this.image = image; }
 }

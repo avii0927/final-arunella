@@ -32,13 +32,13 @@ const ecoRoles = [
     id: 'transporter',
     emoji: '🚛',
     title: 'Reliable Transport',
-    subtitle: 'Clear delivery tasks, optimized GPS routing, and real-time status updates.',
+    subtitle: 'Clear delivery tasks, optimized routing, and real-time order tracking.',
     color: Colors.transporter,
     bgColor: '#FFF1ED',
   },
 ];
 
-const SplashScreen = ({ navigation }) => {
+const GetStartedScreen = ({ navigation }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -126,7 +126,7 @@ const SplashScreen = ({ navigation }) => {
         </Animated.View>
       </ScrollView>
 
-      {/* Single Get Started CTA */}
+      {/* Get Started CTA Footer */}
       <View style={styles.footer}>
         <Button
           title="Get Started"
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: Colors.primary,
     alignItems: 'center',
-    justify: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.xs,
   },
   logoEmoji: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 14,
     alignItems: 'center',
-    justify: 'center',
+    justifyContent: 'center',
     marginRight: 14,
   },
   pillarEmoji: {
@@ -254,5 +254,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplashScreen;
-
+export default GetStartedScreen;

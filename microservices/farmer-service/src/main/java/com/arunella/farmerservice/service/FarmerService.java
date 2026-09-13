@@ -49,7 +49,6 @@ public class FarmerService {
             existing.setContactNo(farmerData.getContactNo());
             existing.setDistrict(farmerData.getDistrict());
             existing.setLocation(farmerData.getLocation());
-            existing.setWallet(farmerData.getWallet());
             existing.setBankAccountNo(farmerData.getBankAccountNo());
             existing.setRating(farmerData.getRating());
             return farmerRepository.save(existing);

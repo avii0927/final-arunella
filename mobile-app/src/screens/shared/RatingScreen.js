@@ -376,44 +376,44 @@ const RatingScreen = ({ navigation }) => {
         )}
 
         {/* Live Rating Leaderboard */}
-        <SectionHeader title="Current Rating Scores" />
+        <SectionHeader title={activeChoice === 'farmer' ? "Farmers Rating Scores" : "Transporters Rating Scores"} />
         <Card style={{ marginBottom: Spacing.xl }}>
-          <Text style={[Typography.body2, { color: Colors.textSecondary, marginBottom: 12 }]}>
-            Ratings are updated in real-time from the database:
-          </Text>
-
-          <Text style={[Typography.label, { color: Colors.farmer, marginBottom: 6 }]}>FARMERS</Text>
-          {farmersLoading ? (
-            <ActivityIndicator color={Colors.farmer} />
+          {activeChoice === 'farmer' ? (
+            <>
+              <Text style={[Typography.label, { color: Colors.farmer, marginBottom: 6 }]}>FARMERS</Text>
+              {farmersLoading ? (
+                <ActivityIndicator color={Colors.farmer} />
+              ) : (
+                farmers.map((f) => (
+                  <View key={f.userId} style={styles.leaderRow}>
+                    <Text style={[Typography.body1, { color: Colors.textPrimary, fontWeight: '600' }]}>
+                      👨‍🌾 {f.name}
+                    </Text>
+                    <Text style={[Typography.body1, { color: Colors.farmer, fontWeight: '800' }]}>
+                      ⭐ {f.rating ?? '—'}
+                    </Text>
+                  </View>
+                ))
+              )}
+            </>
           ) : (
-            farmers.map((f) => (
-              <View key={f.userId} style={styles.leaderRow}>
-                <Text style={[Typography.body1, { color: Colors.textPrimary, fontWeight: '600' }]}>
-                  👨‍🌾 {f.name}
-                </Text>
-                <Text style={[Typography.body1, { color: Colors.farmer, fontWeight: '800' }]}>
-                  ⭐ {f.rating ?? '—'}
-                </Text>
-              </View>
-            ))
-          )}
-
-          <View style={styles.divider} />
-
-          <Text style={[Typography.label, { color: Colors.transporter, marginBottom: 6, marginTop: 8 }]}>TRANSPORTERS</Text>
-          {transportersLoading ? (
-            <ActivityIndicator color={Colors.transporter} />
-          ) : (
-            transporters.map((t) => (
-              <View key={t.userId} style={styles.leaderRow}>
-                <Text style={[Typography.body1, { color: Colors.textPrimary, fontWeight: '600' }]}>
-                  🚛 {t.name}
-                </Text>
-                <Text style={[Typography.body1, { color: Colors.transporter, fontWeight: '800' }]}>
-                  ⭐ {t.rating ?? '—'}
-                </Text>
-              </View>
-            ))
+            <>
+              <Text style={[Typography.label, { color: Colors.transporter, marginBottom: 6 }]}>TRANSPORTERS</Text>
+              {transportersLoading ? (
+                <ActivityIndicator color={Colors.transporter} />
+              ) : (
+                transporters.map((t) => (
+                  <View key={t.userId} style={styles.leaderRow}>
+                    <Text style={[Typography.body1, { color: Colors.textPrimary, fontWeight: '600' }]}>
+                      🚛 {t.name}
+                    </Text>
+                    <Text style={[Typography.body1, { color: Colors.transporter, fontWeight: '800' }]}>
+                      ⭐ {t.rating ?? '—'}
+                    </Text>
+                  </View>
+                ))
+              )}
+            </>
           )}
         </Card>
       </ScrollView>

@@ -28,7 +28,6 @@ const CropDetailScreen = ({ navigation, route }) => {
   const crop = route?.params?.crop || {};
 
   const [pricePerKg, setPricePerKg] = useState(crop.pricePerKg ? String(crop.pricePerKg) : '');
-  const [minPrice, setMinPrice]     = useState(crop.minPrice ? String(crop.minPrice) : '');
   const [stock, setStock]           = useState(crop.stock ? String(crop.stock) : '');
   const [status, setStatus]         = useState(crop.status || 'AVAILABLE');
   const [updating, setUpdating]     = useState(false);
@@ -42,7 +41,6 @@ const CropDetailScreen = ({ navigation, route }) => {
     const payload = {
       ...crop,
       pricePerKg: parseFloat(pricePerKg),
-      minPrice: minPrice ? parseFloat(minPrice) : parseFloat(pricePerKg),
       stock: parseFloat(stock),
       status: status,
     };
@@ -110,9 +108,6 @@ const CropDetailScreen = ({ navigation, route }) => {
           <Text style={[Typography.h2, { color: Colors.textPrimary, fontWeight: '800', marginTop: 12 }]}>
             {crop.productName || 'Crop Listing'}
           </Text>
-          <View style={{ marginTop: 8 }}>
-            <StatusBadge status={status?.toLowerCase()} />
-          </View>
         </View>
 
         {/* Edit Form */}
@@ -127,14 +122,6 @@ const CropDetailScreen = ({ navigation, route }) => {
             onChangeText={setPricePerKg}
             keyboardType="numeric"
             icon="🏷️"
-          />
-
-          <Input
-            label="Minimum Acceptable Price (Rs.)"
-            value={minPrice}
-            onChangeText={setMinPrice}
-            keyboardType="numeric"
-            icon="📉"
           />
 
           <Input

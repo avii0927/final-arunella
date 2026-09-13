@@ -44,7 +44,6 @@ export default function ProductsScreen({ crops, onDeleteProduct }) {
           <Text style={[styles.th, { flex: 2 }]}>Name</Text>
           <Text style={[styles.th, { flex: 1.2 }]}>Stock</Text>
           <Text style={[styles.th, { flex: 1.5 }]}>Price / KG</Text>
-          <Text style={[styles.th, { flex: 1.5 }]}>Min Price</Text>
           <Text style={[styles.th, { flex: 1.5 }]}>Expiry</Text>
           <Text style={[styles.th, { flex: 1.2 }]}>Status</Text>
           <Text style={[styles.thRight, { flex: 1 }]}>Actions</Text>
@@ -64,7 +63,6 @@ export default function ProductsScreen({ crops, onDeleteProduct }) {
                 <Text style={[styles.tdBold, { flex: 2 }]}>{crop.productName}</Text>
                 <Text style={[styles.tdSub, { flex: 1.2 }]}>{crop.stock || '-'}</Text>
                 <Text style={[styles.td, { flex: 1.5 }]}>{crop.pricePerKg || '-'}</Text>
-                <Text style={[styles.tdSub, { flex: 1.5 }]}>{crop.minPrice || '-'}</Text>
                 <Text style={[styles.tdSub, { flex: 1.5 }]}>{crop.expDate || '-'}</Text>
                 <View style={{ flex: 1.2 }}>
                   <View

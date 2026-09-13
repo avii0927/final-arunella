@@ -38,7 +38,6 @@ CREATE TABLE `farmer` (
   `district` VARCHAR(100) DEFAULT NULL,
   `rating` DECIMAL(3,2) DEFAULT '5.00',
   `location` VARCHAR(255) DEFAULT NULL,
-  `wallet` DECIMAL(10,2) DEFAULT '0.00',
   `bank_account_no` VARCHAR(100) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   KEY `fk_farmer_admin` (`admin_id`),
@@ -58,9 +57,7 @@ CREATE TABLE `crop` (
   `status` VARCHAR(50) DEFAULT 'Active',
   `uploaded_date` DATE DEFAULT NULL,
   `exp_date` DATE DEFAULT NULL,
-  `min_price` DECIMAL(10,2) DEFAULT NULL,
   `description` TEXT DEFAULT NULL,
-  `image` LONGBLOB DEFAULT NULL,
   PRIMARY KEY (`product_id`),
   KEY `fk_crop_farmer` (`user_id`),
   CONSTRAINT `fk_crop_farmer` FOREIGN KEY (`user_id`) REFERENCES `farmer` (`user_id`) ON DELETE CASCADE
@@ -144,7 +141,6 @@ CREATE TABLE `delivery` (
   `pickup_location` VARCHAR(255) DEFAULT NULL,
   `delivery_location` VARCHAR(255) DEFAULT NULL,
   `status` VARCHAR(50) DEFAULT 'In Transit',
-  `confirmation_img` LONGBLOB DEFAULT NULL,
   `date` DATE DEFAULT NULL,
   PRIMARY KEY (`delivery_id`),
   KEY `fk_delivery_transporter` (`user_id`),
@@ -164,21 +160,21 @@ INSERT INTO `admin` (`admin_id`, `name`, `email`, `password`) VALUES
 (2, 'System Administrator', 'sysadmin@arunella.lk', 'admin123');
 
 -- 2. Insert Farmers
-INSERT INTO `farmer` (`user_id`, `admin_id`, `role`, `name`, `email`, `password`, `nic`, `contact_no`, `district`, `rating`, `location`, `wallet`, `bank_account_no`) VALUES
-(1, 1, 'FARMER', 'Sunil Perera', 'sunil@farmer.lk', 'pass123', '781920384V', '0771234567', 'Nuwara Eliya', 4.85, 'Keppetipola, Nuwara Eliya', 45000.00, '8001928374'),
-(2, 1, 'FARMER', 'Bandara Menike', 'bandara@farmer.lk', 'pass123', '825910293V', '0719876543', 'Badulla', 4.90, 'Welimada, Badulla', 62000.00, '8002938475'),
-(3, 1, 'FARMER', 'K. Rajapaksha', 'rajapaksha@farmer.lk', 'pass123', '691029384V', '0753344556', 'Matale', 4.70, 'Dambulla Agro Zone', 28000.00, '8003847561'),
-(4, 1, 'FARMER', 'Kamal Silva', 'kamal@farmer.lk', 'pass123', '901293847V', '0761122334', 'Anuradhapura', 4.60, 'Kekirawa, Anuradhapura', 34500.00, '8004958273'),
-(5, 1, 'FARMER', 'Chaminda Kumara', 'chaminda@farmer.lk', 'pass123', '851029485V', '0789988776', 'Jaffna', 4.95, 'Chunnakam, Jaffna', 89000.00, '8005847362');
+INSERT INTO `farmer` (`user_id`, `admin_id`, `role`, `name`, `email`, `password`, `nic`, `contact_no`, `district`, `rating`, `location`, `bank_account_no`) VALUES
+(1, 1, 'FARMER', 'Sunil Perera', 'sunil@farmer.lk', 'pass123', '781920384V', '0771234567', 'Nuwara Eliya', 4.85, 'Keppetipola, Nuwara Eliya', '8001928374'),
+(2, 1, 'FARMER', 'Bandara Menike', 'bandara@farmer.lk', 'pass123', '825910293V', '0719876543', 'Badulla', 4.90, 'Welimada, Badulla', '8002938475'),
+(3, 1, 'FARMER', 'K. Rajapaksha', 'rajapaksha@farmer.lk', 'pass123', '691029384V', '0753344556', 'Matale', 4.70, 'Dambulla Agro Zone', '8003847561'),
+(4, 1, 'FARMER', 'Kamal Silva', 'kamal@farmer.lk', 'pass123', '901293847V', '0761122334', 'Anuradhapura', 4.60, 'Kekirawa, Anuradhapura', '8004958273'),
+(5, 1, 'FARMER', 'Chaminda Kumara', 'chaminda@farmer.lk', 'pass123', '851029485V', '0789988776', 'Jaffna', 4.95, 'Chunnakam, Jaffna', '8005847362');
 
 -- 3. Insert Crop Listings
-INSERT INTO `crop` (`product_id`, `product_name`, `user_id`, `price_per_kg`, `stock`, `status`, `uploaded_date`, `exp_date`, `min_price`, `description`, `image`) VALUES
-(101, 'Fresh Nuwara Eliya Carrots', 1, 280.00, 1500, 'Active', '2026-09-01', '2026-09-25', 250.00, 'Grade A organic carrots harvested fresh from Nuwara Eliya hills.', NULL),
-(102, 'Dambulla Big Onions', 3, 190.00, 3200, 'Active', '2026-09-05', '2026-10-15', 175.00, 'High quality dry big onions ready for bulk distribution.', NULL),
-(103, 'Jaffna Red Onions', 5, 420.00, 800, 'Nearing Expiry', '2026-08-20', '2026-09-18', 380.00, 'Premium red onions from Jaffna farms.', NULL),
-(104, 'Welimada Organic Potatoes', 2, 310.00, 120, 'Low Stock', '2026-09-02', '2026-09-28', 290.00, 'Cleaned red potatoes, ideal for retail grocery packaging.', NULL),
-(105, 'Kandy Green Leeks', 1, 160.00, 950, 'Active', '2026-09-10', '2026-09-24', 140.00, 'Crisp green leeks ready for central market delivery.', NULL),
-(106, 'Kekirawa Samba Rice', 4, 220.00, 5000, 'Active', '2026-08-15', '2026-12-31', 200.00, 'Araliya style polished Samba rice batch.', NULL);
+INSERT INTO `crop` (`product_id`, `product_name`, `user_id`, `price_per_kg`, `stock`, `status`, `uploaded_date`, `exp_date`, `description`) VALUES
+(101, 'Fresh Nuwara Eliya Carrots', 1, 280.00, 1500, 'Active', '2026-09-01', '2026-09-25', 'Grade A organic carrots harvested fresh from Nuwara Eliya hills.'),
+(102, 'Dambulla Big Onions', 3, 190.00, 3200, 'Active', '2026-09-05', '2026-10-15', 'High quality dry big onions ready for bulk distribution.'),
+(103, 'Jaffna Red Onions', 5, 420.00, 800, 'Nearing Expiry', '2026-08-20', '2026-09-18', 'Premium red onions from Jaffna farms.'),
+(104, 'Welimada Organic Potatoes', 2, 310.00, 120, 'Low Stock', '2026-09-02', '2026-09-28', 'Cleaned red potatoes, ideal for retail grocery packaging.'),
+(105, 'Kandy Green Leeks', 1, 160.00, 950, 'Active', '2026-09-10', '2026-09-24', 'Crisp green leeks ready for central market delivery.'),
+(106, 'Kekirawa Samba Rice', 4, 220.00, 5000, 'Active', '2026-08-15', '2026-12-31', 'Araliya style polished Samba rice batch.');
 
 -- 4. Insert Buyers
 INSERT INTO `buyer` (`user_id`, `role`, `name`, `email`, `password`, `nic`, `contact_no`, `district`, `rating`, `business_reg_no`, `market_location`) VALUES
@@ -208,10 +204,10 @@ INSERT INTO `transporter` (`user_id`, `role`, `name`, `email`, `password`, `nic`
 (3, 'TRANSPORTER', 'Ruhunu Express Freight', 'ruhunu.express@gmail.com', 'trans123', '881029384V', '0781122334', 'Galle', 4.80, 'SP-LB-9932', 7500.0);
 
 -- 8. Insert Deliveries
-INSERT INTO `delivery` (`delivery_id`, `user_id`, `order_id`, `pickup_location`, `delivery_location`, `status`, `confirmation_img`, `date`) VALUES
-(1001, 1, 501, 'Keppetipola, Nuwara Eliya', 'Keells Central Depot, Ranala', 'In Transit', NULL, '2026-09-08'),
-(1002, 2, 502, 'Dambulla Agro Zone', 'Cargills Logistics Hub, Mabima', 'Delivered', NULL, '2026-09-09'),
-(1003, 1, 503, 'Chunnakam, Jaffna', '5th Cross Street, Pettah', 'In Transit', NULL, '2026-09-10');
+INSERT INTO `delivery` (`delivery_id`, `user_id`, `order_id`, `pickup_location`, `delivery_location`, `status`, `date`) VALUES
+(1001, 1, 501, 'Keppetipola, Nuwara Eliya', 'Keells Central Depot, Ranala', 'In Transit', '2026-09-08'),
+(1002, 2, 502, 'Dambulla Agro Zone', 'Cargills Logistics Hub, Mabima', 'Delivered', '2026-09-09'),
+(1003, 1, 503, 'Chunnakam, Jaffna', '5th Cross Street, Pettah', 'In Transit', '2026-09-10');
 
 -- ============================================================================
 -- SCRIPT COMPLETE

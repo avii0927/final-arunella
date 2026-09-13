@@ -20,14 +20,12 @@ const PlaceOrderScreen = ({ navigation, route }) => {
   const BUYER_ID = user?.userId ?? 1;
   const item = route?.params?.item || {
     productName: 'Red Onion', pricePerKg: 280, stock: 450,
-    productId: null,
+    productId: 101, farmerId: 1,
   };
 
-  const [qty, setQty]                   = useState('50');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [deliveryDate, setDeliveryDate] = useState('');
-  const [note, setNote]                 = useState('');
-  const [submitting, setSubmitting]     = useState(false);
+  const marketLocation = user?.market_location || user?.marketLocation || user?.district || 'Buyer Market Location';
+  const [qty, setQty]               = useState('50');
+  const [submitting, setSubmitting] = useState(false);
 
   const totalKg  = parseInt(qty, 10) || 0;
   const subtotal = totalKg * (item.pricePerKg || 0);
@@ -41,13 +39,17 @@ const PlaceOrderScreen = ({ navigation, route }) => {
     }
 
     const today = new Date().toISOString().split('T')[0];
+    const farmerId = item.farmer?.userId || item.farmerId || (typeof item.farmer === 'number' ? item.farmer : (item.userId || 1));
+    const productId = item.productId || item.id || 101;
 
     const orderPayload = {
-      buyer:    { userId: BUYER_ID },
-      price:    subtotal,
-      quantity: parseInt(qty, 10),
-      date:     today,
-      status:   'PENDING',
+      buyer:     { userId: BUYER_ID },
+      farmerId:  farmerId,
+      productId: productId,
+      price:     subtotal,
+      quantity:  parseInt(qty, 10),
+      date:      today,
+      status:    'PENDING',
     };
 
     try {
@@ -56,8 +58,7 @@ const PlaceOrderScreen = ({ navigation, route }) => {
       Alert.alert(
         'Order Placed! 🎉',
         `Your order for ${qty} kg of ${item.productName} has been placed successfully.`,
-        [{ text: 'View Orders', onPress: () => navigation.navigate('BuyerOrders') },
-         { text: 'OK',          onPress: () => navigation.goBack() }],
+        [{ text: 'OK', onPress: () => navigation.goBack() }],
       );
     } catch (err) {
       Alert.alert('Order Failed', `Could not place order: ${err.message}`);
@@ -104,7 +105,7 @@ const PlaceOrderScreen = ({ navigation, route }) => {
           </View>
         </Card>
 
-        {/* Quantity & delivery */}
+        {/* Quantity & auto delivery location */}
         <Text style={[Typography.label, { color: Colors.textSecondary, marginBottom: 10 }]}>ORDER DETAILS</Text>
         <Input
           label="Quantity (kg) *"
@@ -114,31 +115,19 @@ const PlaceOrderScreen = ({ navigation, route }) => {
           icon="⚖️"
           keyboardType="numeric"
         />
-        <Input
-          label="Delivery Address"
-          value={deliveryAddress}
-          onChangeText={setDeliveryAddress}
-          placeholder="Enter delivery address"
-          icon="📍"
-          multiline
-          numberOfLines={2}
-        />
-        <Input
-          label="Preferred Delivery Date"
-          value={deliveryDate}
-          onChangeText={setDeliveryDate}
-          placeholder="YYYY-MM-DD"
-          icon="📅"
-        />
-        <Input
-          label="Special Instructions (Optional)"
-          value={note}
-          onChangeText={setNote}
-          placeholder="Any special requirements..."
-          icon="📝"
-          multiline
-          numberOfLines={3}
-        />
+
+        {/* Auto Buyer Market Location */}
+        <View style={styles.marketBox}>
+          <Text style={{ fontSize: 22, marginRight: 10 }}>📍</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={[Typography.caption, { color: Colors.textMuted, fontWeight: '700' }]}>
+              DELIVERY LOCATION (BUYER MARKET)
+            </Text>
+            <Text style={[Typography.body1, { color: Colors.textPrimary, fontWeight: '600', marginTop: 2 }]}>
+              {marketLocation}
+            </Text>
+          </View>
+        </View>
 
         {/* Payment method */}
         <Text style={[Typography.label, { color: Colors.textSecondary, marginBottom: 12 }]}>
@@ -215,6 +204,12 @@ const styles = StyleSheet.create({
   productCard: { marginBottom: Spacing.lg },
   productRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   productEmoji: { width: 64, height: 64, borderRadius: Radii.lg, alignItems: 'center', justifyContent: 'center' },
+  marketBox: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: Colors.white, borderRadius: Radii.lg,
+    padding: Spacing.md, marginBottom: Spacing.md,
+    borderWidth: 1, borderColor: Colors.border, ...Shadows.sm,
+  },
   paymentOption: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     backgroundColor: Colors.white, borderRadius: Radii.lg,

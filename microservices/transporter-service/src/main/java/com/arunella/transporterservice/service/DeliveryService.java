@@ -45,7 +45,6 @@ public class DeliveryService {
             if (deliveryData.getPickupLocation() != null) existing.setPickupLocation(deliveryData.getPickupLocation());
             if (deliveryData.getDeliveryLocation() != null) existing.setDeliveryLocation(deliveryData.getDeliveryLocation());
             if (deliveryData.getStatus() != null) existing.setStatus(deliveryData.getStatus());
-            if (deliveryData.getConfirmationImg() != null) existing.setConfirmationImg(deliveryData.getConfirmationImg());
             if (deliveryData.getDate() != null) existing.setDate(deliveryData.getDate());
             if (deliveryData.getTransporter() != null) existing.setTransporter(deliveryData.getTransporter());
             if (deliveryData.getOrderId() != null) existing.setOrderId(deliveryData.getOrderId());

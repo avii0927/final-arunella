@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Colors, Typography, Spacing, Radii, Shadows } from '../../theme';
 import { Card, Button, StatusBadge, SectionHeader } from '../../components';
-import { DeliveryService, OrderService } from '../../api';
+import { DeliveryService, OrderService, CropService, FarmerService, BuyerService } from '../../api';
 import { useAuth } from '../../context/AuthContext';
 
 const DeliveryDetailScreen = ({ route, navigation }) => {
@@ -22,31 +22,63 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
   const passedDelivery = route.params?.delivery;
   const deliveryIdParam = route.params?.deliveryId || passedDelivery?.deliveryId;
 
-  const [delivery, setDelivery] = useState(passedDelivery || null);
-  const [orderDetails, setOrderDetails] = useState(passedDelivery?.order || null);
-  const [loading, setLoading] = useState(!passedDelivery);
-  const [updating, setUpdating] = useState(false);
+  const [delivery, setDelivery]         = useState(passedDelivery || null);
+  const [orderDetails, setOrderDetails] = useState(passedDelivery?.order || passedDelivery?.rawOrder || null);
+  const [crop, setCrop]                 = useState(null);
+  const [farmer, setFarmer]             = useState(null);
+  const [buyer, setBuyer]               = useState(passedDelivery?.buyer || passedDelivery?.order?.buyer || null);
+  const [loading, setLoading]           = useState(true);
+  const [updating, setUpdating]         = useState(false);
 
   const fetchDeliveryDetails = async () => {
     try {
-      if (!passedDelivery) setLoading(true);
-      if (deliveryIdParam) {
-        const deliveryData = await DeliveryService.getById(deliveryIdParam);
-        if (deliveryData) {
-          setDelivery(deliveryData);
-          const activeOrderId = deliveryData.orderId || deliveryData.order?.orderId;
-          if (activeOrderId) {
-            try {
-              const orderData = await OrderService.getById(activeOrderId);
-              if (orderData) setOrderDetails(orderData);
-            } catch (e) {
-              console.log('Order fetch notice:', e.message);
-            }
-          }
+      setLoading(true);
+      let targetDelivery = passedDelivery || null;
+
+      // 1. Fetch delivery if numeric deliveryIdParam exists
+      if (deliveryIdParam && typeof deliveryIdParam === 'number') {
+        const fetchedDel = await DeliveryService.getById(deliveryIdParam).catch(() => null);
+        if (fetchedDel) {
+          targetDelivery = fetchedDel;
+          setDelivery(fetchedDel);
         }
       }
+
+      // 2. Resolve orderId
+      const targetOrderId = route.params?.orderId || targetDelivery?.orderId || targetDelivery?.order?.orderId || passedDelivery?.orderId;
+
+      // 3. Fetch order if orderId exists
+      let targetOrder = targetDelivery?.order || orderDetails || null;
+      if (targetOrderId && (!targetOrder || !targetOrder.productId)) {
+        const fetchedOrder = await OrderService.getById(targetOrderId).catch(() => null);
+        if (fetchedOrder) {
+          targetOrder = fetchedOrder;
+          setOrderDetails(fetchedOrder);
+        }
+      }
+
+      // 4. Fetch Crop details if productId exists
+      if (targetOrder?.productId) {
+        const cropData = await CropService.getById(targetOrder.productId).catch(() => null);
+        if (cropData) setCrop(cropData);
+      }
+
+      // 5. Fetch Farmer details if farmerId exists
+      if (targetOrder?.farmerId) {
+        const farmerData = await FarmerService.getById(targetOrder.farmerId).catch(() => null);
+        if (farmerData) setFarmer(farmerData);
+      }
+
+      // 6. Fetch Buyer details if buyer/userId exists
+      const buyerId = targetOrder?.buyer?.userId || targetOrder?.userId;
+      if (buyerId && (!targetOrder?.buyer || !buyer)) {
+        const buyerData = await BuyerService.getById(buyerId).catch(() => null);
+        if (buyerData) setBuyer(buyerData);
+      } else if (targetOrder?.buyer) {
+        setBuyer(targetOrder.buyer);
+      }
     } catch (err) {
-      console.log('Delivery fetch error:', err.message);
+      console.log('DeliveryDetail fetch error:', err.message);
     } finally {
       setLoading(false);
     }
@@ -56,22 +88,47 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
     fetchDeliveryDetails();
   }, [deliveryIdParam]);
 
-  const normaliseStatus = (s = '') => s.toLowerCase().replace('_', '-');
+  const normaliseStatus = (s = '') => {
+    const lower = s.toLowerCase().replace('_', '-');
+    if (lower === 'in-transit') return 'shipped';
+    return lower;
+  };
 
   const handleUpdateStatus = async (newStatus, successMsg) => {
-    if (!delivery?.deliveryId) return;
     setUpdating(true);
-    const orderIdVal = delivery?.orderId || delivery?.order?.orderId || orderDetails?.orderId;
+    const targetOrderId = route.params?.orderId || delivery?.orderId || delivery?.order?.orderId || orderDetails?.orderId;
+    const isExistingDelivery = delivery?.deliveryId && typeof delivery.deliveryId === 'number';
+
     try {
-      const updatedPayload = {
-        ...delivery,
-        deliveryId: delivery.deliveryId,
-        orderId: orderIdVal,
-        status: newStatus,
-        transporter: { userId: TRANSPORTER_ID },
-        date: delivery?.date || new Date().toISOString().split('T')[0],
-      };
-      await DeliveryService.update(delivery.deliveryId, updatedPayload);
+      if (isExistingDelivery) {
+        await DeliveryService.update(delivery.deliveryId, {
+          ...delivery,
+          status: newStatus,
+          transporter: { userId: TRANSPORTER_ID },
+          orderId: targetOrderId,
+          date: delivery?.date || new Date().toISOString().split('T')[0],
+        });
+      } else if (targetOrderId) {
+        // Create new delivery entry for this order
+        const createdDel = await DeliveryService.create({
+          orderId: targetOrderId,
+          pickupLocation: farmer?.location || farmer?.district || pickupAddr,
+          deliveryLocation: buyer?.marketLocation || buyer?.district || dropoffAddr,
+          status: newStatus,
+          transporter: { userId: TRANSPORTER_ID },
+          date: new Date().toISOString().split('T')[0],
+        });
+        if (createdDel) setDelivery(createdDel);
+      }
+
+      if (targetOrderId) {
+        await OrderService.update(targetOrderId, {
+          ...(orderDetails || {}),
+          orderId: targetOrderId,
+          status: newStatus,
+        }).catch(() => null);
+      }
+
       setDelivery((prev) => ({ ...prev, status: newStatus }));
       Alert.alert('Status Updated 🎉', successMsg, [
         { text: 'OK', onPress: () => navigation.goBack() },
@@ -105,30 +162,30 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
     );
   }
 
-  const statusNorm = normaliseStatus(delivery?.status || 'pending');
+  const statusNorm = normaliseStatus(delivery?.status || orderDetails?.status || 'pending');
 
   // Timeline steps computation
   const isPending = statusNorm === 'pending';
-  const isInTransit = statusNorm === 'in-transit' || statusNorm === 'in_transit';
+  const isInTransit = statusNorm === 'shipped' || statusNorm === 'in-transit' || statusNorm === 'in_transit';
   const isDelivered = statusNorm === 'delivered';
   const isCancelled = statusNorm === 'cancelled';
 
   // Derived real data
-  const activeOrderId = delivery?.orderId || delivery?.order?.orderId || orderDetails?.orderId;
-  const pickupAddr = delivery?.pickupLocation || orderDetails?.pickupLocation || orderDetails?.crop?.location || 'Address Pending';
-  const dropoffAddr = delivery?.deliveryLocation || orderDetails?.deliveryAddress || 'Address Pending';
+  const activeOrderId = route.params?.orderId || delivery?.orderId || delivery?.order?.orderId || orderDetails?.orderId;
+  const pickupAddr = farmer?.location || farmer?.district || delivery?.pickupLocation || orderDetails?.pickupLocation || 'Farm Agro Depot';
+  const dropoffAddr = buyer?.marketLocation || buyer?.district || delivery?.deliveryLocation || orderDetails?.deliveryAddress || 'Market Wholesale Distribution Center';
   
-  const farmerContactName = orderDetails?.crop?.farmer?.name || delivery?.farmerName || 'Farmer / Supplier';
-  const farmerContactPhone = orderDetails?.crop?.farmer?.phone || delivery?.farmerPhone;
+  const farmerContactName = farmer?.name || orderDetails?.crop?.farmer?.name || delivery?.farmerName || 'Farmer / Supplier';
+  const farmerContactPhone = farmer?.contactNo || orderDetails?.crop?.farmer?.phone || delivery?.farmerPhone;
 
-  const buyerContactName = orderDetails?.buyer?.name || delivery?.buyerName || 'Buyer / Recipient';
-  const buyerContactPhone = orderDetails?.buyer?.phone || delivery?.buyerPhone;
+  const buyerContactName = buyer?.name || orderDetails?.buyer?.name || delivery?.buyerName || 'Buyer / Recipient';
+  const buyerContactPhone = buyer?.contactNo || orderDetails?.buyer?.phone || delivery?.buyerPhone;
 
-  const cropName = orderDetails?.crop?.name || delivery?.cropName || 'Agricultural Cargo';
+  const cropName = crop?.productName || orderDetails?.crop?.name || delivery?.cropName || 'Fresh Agricultural Produce';
   const cropQuantity = orderDetails?.quantity ? `${orderDetails.quantity} KG` : delivery?.quantity ? `${delivery.quantity}` : 'Standard Batch';
-  const cargoCategory = orderDetails?.crop?.category || delivery?.cargoType || 'Perishable Produce';
+  const cargoCategory = crop?.category || 'Perishable Produce';
 
-  const numericPayout = Number(delivery?.totalPayout || orderDetails?.price || orderDetails?.totalPrice || 0);
+  const numericPayout = Number(orderDetails?.price || delivery?.totalPayout || orderDetails?.totalPrice || 0);
 
   return (
     <View style={styles.container}>
@@ -194,7 +251,7 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
                   </Text>
                 </View>
                 <Text style={isInTransit || isDelivered ? styles.stepLabelActive : styles.stepLabelInactive}>
-                  In Transit
+                  Shipped
                 </Text>
               </View>
 
@@ -215,7 +272,7 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
 
         {/* Route Details Card */}
         <Card style={styles.sectionCard}>
-          <SectionHeader title="Route & Navigation" />
+          <SectionHeader title="Route Details" />
 
           <View style={styles.routeBox}>
             {/* Pickup */}
@@ -232,14 +289,6 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
                   Contact: {farmerContactName}
                 </Text>
               </View>
-              {farmerContactPhone ? (
-                <TouchableOpacity
-                  style={styles.callBtn}
-                  onPress={() => handleCall(farmerContactPhone)}
-                >
-                  <Text style={{ fontSize: 16 }}>📞</Text>
-                </TouchableOpacity>
-              ) : null}
             </View>
 
             <View style={styles.verticalDivider} />
@@ -258,40 +307,6 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
                   Receiver: {buyerContactName}
                 </Text>
               </View>
-              {buyerContactPhone ? (
-                <TouchableOpacity
-                  style={styles.callBtn}
-                  onPress={() => handleCall(buyerContactPhone)}
-                >
-                  <Text style={{ fontSize: 16 }}>📞</Text>
-                </TouchableOpacity>
-              ) : null}
-            </View>
-          </View>
-        </Card>
-
-        {/* Cargo Specification Card */}
-        <Card style={styles.sectionCard}>
-          <SectionHeader title="Cargo & Package Info" />
-
-          <View style={styles.infoGrid}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Order Reference:</Text>
-              <Text style={styles.infoValue}>#{activeOrderId || '—'}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Crop / Product:</Text>
-              <Text style={styles.infoValue}>{cropName}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Total Weight/Qty:</Text>
-              <Text style={styles.infoValue}>{cropQuantity}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Cargo Handling:</Text>
-              <Text style={[styles.infoValue, { color: Colors.warning, fontWeight: '700' }]}>
-                {cargoCategory}
-              </Text>
             </View>
           </View>
         </Card>
@@ -328,7 +343,7 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
                 roleColor={Colors.success}
                 size="lg"
                 loading={updating}
-                onPress={() => handleUpdateStatus('IN_TRANSIT', 'You have accepted this delivery! Drive safely.')}
+                onPress={() => handleUpdateStatus('SHIPPED', 'You have accepted this delivery! Drive safely.')}
               />
               <Button
                 title="Decline Delivery"
@@ -360,18 +375,6 @@ const DeliveryDetailScreen = ({ route, navigation }) => {
                           handleUpdateStatus('DELIVERED', 'Congratulations! Trip completed successfully.'),
                       },
                     ]
-                  )
-                }
-              />
-              <Button
-                title="Navigate / Open Maps 🗺️"
-                variant="secondary"
-                roleColor={Colors.transporter}
-                size="md"
-                onPress={() =>
-                  Alert.alert(
-                    'GPS Navigation',
-                    `Opening directions to ${dropoffAddr}...`
                   )
                 }
               />

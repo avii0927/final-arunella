@@ -24,12 +24,11 @@ public class Farmer {
     private String district;
     private BigDecimal rating;
     private String location;
-    private BigDecimal wallet;
     private String bankAccountNo;
 
     public Farmer() {}
 
-    public Farmer(Long userId, Admin admin, String role, String name, String email, String password, String nic, String contactNo, String district, BigDecimal rating, String location, BigDecimal wallet, String bankAccountNo) {
+    public Farmer(Long userId, Admin admin, String role, String name, String email, String password, String nic, String contactNo, String district, BigDecimal rating, String location, String bankAccountNo) {
         this.userId = userId;
         this.admin = admin;
         this.role = role;
@@ -41,7 +40,6 @@ public class Farmer {
         this.district = district;
         this.rating = rating;
         this.location = location;
-        this.wallet = wallet;
         this.bankAccountNo = bankAccountNo;
     }
 
@@ -77,9 +75,6 @@ public class Farmer {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
-
-    public BigDecimal getWallet() { return wallet; }
-    public void setWallet(BigDecimal wallet) { this.wallet = wallet; }
 
     public String getBankAccountNo() { return bankAccountNo; }
     public void setBankAccountNo(String bankAccountNo) { this.bankAccountNo = bankAccountNo; }

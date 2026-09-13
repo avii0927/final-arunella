@@ -47,9 +47,7 @@ public class CropService {
             existing.setStock(cropData.getStock());
             existing.setStatus(cropData.getStatus());
             existing.setExpDate(cropData.getExpDate());
-            existing.setMinPrice(cropData.getMinPrice());
             existing.setDescription(cropData.getDescription());
-            existing.setImage(cropData.getImage());
             return cropRepository.save(existing);
         }
         return null;

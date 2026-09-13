@@ -21,21 +21,17 @@ public class Delivery {
     private String deliveryLocation;
     private String status;
 
-    @Lob
-    private byte[] confirmationImg;
-
     private LocalDate date;
 
     public Delivery() {}
 
-    public Delivery(Long deliveryId, Transporter transporter, Long orderId, String pickupLocation, String deliveryLocation, String status, byte[] confirmationImg, LocalDate date) {
+    public Delivery(Long deliveryId, Transporter transporter, Long orderId, String pickupLocation, String deliveryLocation, String status, LocalDate date) {
         this.deliveryId = deliveryId;
         this.transporter = transporter;
         this.orderId = orderId;
         this.pickupLocation = pickupLocation;
         this.deliveryLocation = deliveryLocation;
         this.status = status;
-        this.confirmationImg = confirmationImg;
         this.date = date;
     }
 
@@ -56,9 +52,6 @@ public class Delivery {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-
-    public byte[] getConfirmationImg() { return confirmationImg; }
-    public void setConfirmationImg(byte[] confirmationImg) { this.confirmationImg = confirmationImg; }
 
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }

@@ -21,14 +21,12 @@ const AddCropScreen = ({ navigation }) => {
   const FARMER_ID = user?.userId ?? 1;
 
   const [selectedCategory, setSelectedCategory] = useState('Vegetables');
-  const [cropName, setCropName]       = useState('');
-  const [qty, setQty]                 = useState('');
-  const [price, setPrice]             = useState('');
-  const [minPrice, setMinPrice]       = useState('');
-  const [expDate, setExpDate]         = useState('');
-  const [location, setLocation]       = useState('');
-  const [desc, setDesc]               = useState('');
-  const [submitting, setSubmitting]   = useState(false);
+  const [cropName, setCropName] = useState('');
+  const [qty, setQty] = useState('');
+  const [price, setPrice] = useState('');
+  const [expDate, setExpDate] = useState('');
+  const [desc, setDesc] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handlePublish = async () => {
     if (!cropName.trim() || !qty || !price) {
@@ -40,13 +38,12 @@ const AddCropScreen = ({ navigation }) => {
     const cropPayload = {
       farmer: { userId: FARMER_ID },
       productName: cropName.trim(),
-      stock:        parseInt(qty, 10),
-      pricePerKg:   parseFloat(price),
-      minPrice:     minPrice ? parseFloat(minPrice) : parseFloat(price),
-      status:       'AVAILABLE',
+      stock: parseInt(qty, 10),
+      pricePerKg: parseFloat(price),
+      status: 'AVAILABLE',
       uploadedDate: today,
-      expDate:      expDate || null,
-      description:  desc || null,
+      expDate: expDate || null,
+      description: desc || null,
     };
 
     try {
@@ -79,17 +76,6 @@ const AddCropScreen = ({ navigation }) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        {/* Image picker placeholder */}
-        <TouchableOpacity style={styles.imagePicker}>
-          <Text style={{ fontSize: 48, marginBottom: 10 }}>📷</Text>
-          <Text style={[Typography.body1, { color: Colors.textSecondary, fontWeight: '600' }]}>
-            Add Crop Photos
-          </Text>
-          <Text style={[Typography.caption, { color: Colors.textMuted }]}>
-            Add up to 5 photos of your crop
-          </Text>
-        </TouchableOpacity>
-
         {/* Category */}
         <Text style={[Typography.label, { color: Colors.textSecondary, marginBottom: 10 }]}>
           CATEGORY
@@ -117,12 +103,10 @@ const AddCropScreen = ({ navigation }) => {
         </ScrollView>
 
         {/* Form fields */}
-        <Input label="Crop Name *"              value={cropName}  onChangeText={setCropName}  placeholder="e.g. Red Onion"       icon="🌾" />
-        <Input label="Available Quantity (kg) *" value={qty}       onChangeText={setQty}       placeholder="e.g. 500"             icon="⚖️"  keyboardType="numeric" />
-        <Input label="Price per kg (Rs.) *"      value={price}     onChangeText={setPrice}     placeholder="e.g. 280"             icon="💰"  keyboardType="numeric" />
-        <Input label="Minimum Price per kg (Rs.)" value={minPrice} onChangeText={setMinPrice}  placeholder="e.g. 250 (optional)"  icon="📉"  keyboardType="numeric" />
-        <Input label="Expiry Date (YYYY-MM-DD)"  value={expDate}   onChangeText={setExpDate}   placeholder="e.g. 2026-10-15"      icon="📅" />
-        <Input label="Pickup Location"           value={location}  onChangeText={setLocation}  placeholder="Enter farm address"   icon="📍" />
+        <Input label="Crop Name *" value={cropName} onChangeText={setCropName} placeholder="e.g. Red Onion" icon="🌾" />
+        <Input label="Available Quantity (kg) *" value={qty} onChangeText={setQty} placeholder="e.g. 500" icon="⚖️" keyboardType="numeric" />
+        <Input label="Price per kg (Rs.) *" value={price} onChangeText={setPrice} placeholder="e.g. 280" icon="💰" keyboardType="numeric" />
+        <Input label="Expiry Date (YYYY-MM-DD)" value={expDate} onChangeText={setExpDate} placeholder="e.g. 2026-10-15" icon="📅" />
         <Input
           label="Description (Optional)"
           value={desc}
@@ -174,17 +158,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: { padding: Spacing.lg, paddingBottom: 40 },
-  imagePicker: {
-    borderWidth: 2,
-    borderColor: Colors.border,
-    borderStyle: 'dashed',
-    borderRadius: Radii.xl,
-    height: 160,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.farmerLight,
-    marginBottom: Spacing.lg,
-  },
   categoryChip: {
     paddingHorizontal: 18,
     paddingVertical: 10,
