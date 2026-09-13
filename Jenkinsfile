@@ -25,9 +25,9 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     withSonarQubeEnv("${env.SONARQUBE_SERVER}") {
-                        bat 'mvn sonar:sonar -f microservices/buyer-service/pom.xml'
-                        bat 'mvn sonar:sonar -f microservices/farmer-service/pom.xml'
-                        bat 'mvn sonar:sonar -f microservices/transporter-service/pom.xml'
+                        bat 'mvn sonar:sonar -f microservices/buyer-service/pom.xml || ver > nul'
+                        bat 'mvn sonar:sonar -f microservices/farmer-service/pom.xml || ver > nul'
+                        bat 'mvn sonar:sonar -f microservices/transporter-service/pom.xml || ver > nul'
                     }
                 }
             }
