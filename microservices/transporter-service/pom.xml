@@ -48,10 +48,13 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<!-- 1. Spring Boot Plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<!-- 2. SonarQube Scanner Plugin (ADDED THIS) -->
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
