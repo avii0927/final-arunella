@@ -40,10 +40,12 @@ pipeline {
         }
         stage('Push to Docker Hub') { 
             steps { 
-                echo 'Pushing Docker images to Docker Hub...'
+                echo 'Pushing Docker images sequentially to Docker Hub...'
                 script {
                     docker.withRegistry('', env.DOCKERHUB_CREDS) {
-                        bat 'docker compose push'
+                        bat 'docker push avii9922/arunella-buyer-service:latest'
+                        bat 'docker push avii9922/arunella-farmer-service:latest'
+                        bat 'docker push avii9922/arunella-transporter-service:latest'
                     }
                 }
             } 
