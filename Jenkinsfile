@@ -35,36 +35,17 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image') { 
+        stage('Build Docker Images') { 
             steps { 
-                // Build the image from the Dockerfile 
-                bat 'docker build -t %IMAGE_NAME% .' 
+                echo 'Building Docker images for all microservices...'
+                bat 'docker compose build'
             } 
         }
-        stage('Push to docker Hub') { 
+        stage('Deploy Microservices') { 
             steps { 
-                script{
-                    docker.withRegistry('', env.DOCKERHUB_CREDS){
-                        bat 'docker push  %IMAGE_NAME%' 
-                    }
-                }
-            } 
-        } 
-        stage('Stop Old Container') { 
-            steps { 
-                // Ignore failure if no container is currently running 
-                bat 'docker stop %CONTAINER_NAME% || exit 0' 
-            } 
-        } 
-        stage('Remove Old Container') { 
-            steps { 
-                bat 'docker rm %CONTAINER_NAME% || exit 0' 
-            } 
-        } 
-        stage('Run New Container') { 
-            steps { 
-                // 2. ⚡ Changed port from 8080:8080 to 8500:8500 to match your app 
-                bat 'docker run -d -p 8500:8500 --name %CONTAINER_NAME% %IMAGE_NAME%' 
+                echo 'Deploying containers with Docker Compose...'
+                bat 'docker compose down || exit 0'
+                bat 'docker compose up -d'
             } 
         } 
     } 
