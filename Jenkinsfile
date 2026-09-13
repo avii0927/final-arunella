@@ -5,21 +5,17 @@ pipeline {
         jdk 'jdk21' 
     } 
     environment { 
-        IMAGE_NAME = "avii9922/arunella" //change
-        CONTAINER_NAME = "arunella" //change
         DOCKERHUB_CREDS = 'dockerHub'
         SONARQUBE_SERVER = 'Git-SonarQube-Docker-Pipeline'
     } 
     stages { 
         stage('Checkout') { 
             steps { 
-                // 1. ⚠️ CHANGE THIS to your actual repository URL 
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/avii0927/final-arunella.git']])
             } 
         } 
         stage('Build with Maven') { 
             steps { 
-                // Compile and package the Spring Boot app 
                 bat 'mvn clean package -DskipTests -f microservices/buyer-service/pom.xml'
                 bat 'mvn clean package -DskipTests -f microservices/farmer-service/pom.xml'
                 bat 'mvn clean package -DskipTests -f microservices/transporter-service/pom.xml'
@@ -29,7 +25,6 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     withSonarQubeEnv("${env.SONARQUBE_SERVER}") {
-                        // Push code analysis to SonarQube server
                         bat 'mvn sonar:sonar -f microservices/buyer-service/pom.xml'
                         bat 'mvn sonar:sonar -f microservices/farmer-service/pom.xml'
                         bat 'mvn sonar:sonar -f microservices/transporter-service/pom.xml'
@@ -43,6 +38,16 @@ pipeline {
                 bat 'docker compose build'
             } 
         }
+        stage('Push to Docker Hub') { 
+            steps { 
+                echo 'Pushing Docker images to Docker Hub...'
+                script {
+                    docker.withRegistry('', env.DOCKERHUB_CREDS) {
+                        bat 'docker compose push'
+                    }
+                }
+            } 
+        }
         stage('Deploy Microservices') { 
             steps { 
                 echo 'Deploying containers with Docker Compose...'
@@ -53,7 +58,7 @@ pipeline {
     } 
     post { 
         success { 
-            echo 'Deployment successful.' 
+            echo 'Build, Docker Hub Push, and Deployment successful.' 
         } 
         failure { 
             echo 'Pipeline failed — check console output.' 
