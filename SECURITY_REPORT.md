@@ -3,7 +3,7 @@
 ## 🔐 Executive Summary
 This document provides a detailed technical report on the security features implemented across the **Arunella Agricultural System** microservices (`farmer-service`, `buyer-service`, and `transporter-service`), Admin Web Portal, and Mobile App.
 
-The system incorporates defense-in-depth security principles, including **BCrypt password hashing**, **JWT secret isolation**, **environment variable configuration fallbacks**, **CORS policy control**, **SQL privacy suppression**, **input validation & sanitization**, and **Git repository hardening**.
+The system incorporates defense-in-depth security principles, including **BCrypt password hashing**, **environment variable configuration fallbacks**, **CORS policy control**, **SQL privacy suppression**, **input validation & sanitization**, and **Git repository hardening**.
 
 ---
 
@@ -83,23 +83,7 @@ The system incorporates defense-in-depth security principles, including **BCrypt
 
 ---
 
-### 4. JWT (JSON Web Token) Secret Isolation
-* **Files Modified**:
-  * `application.properties` in all 3 microservices
-
-* **Technical Implementation**:
-  ```properties
-  jwt.secret=${JWT_SECRET:ArunellaSecretKeyForJWTTokenGenerationCSC313Project2026SecureKey!}
-  jwt.expiration=${JWT_EXPIRATION:86400000} # 24 Hours in milliseconds
-  ```
-
-* **Why it was used**:
-  * **Stateless API Authentication**: Allows microservices to verify user identities across HTTP requests without requiring session state in memory.
-  * **Production Secret Security**: Allows production servers to inject a high-entropy secret via `JWT_SECRET` while keeping development safe.
-
----
-
-### 5. Input Sanitization & Authentication Validation
+### 4. Input Sanitization & Authentication Validation
 * **Files Modified**:
   * `admin-web/src/screens/LoginScreen.js`
   * `admin-web/src/services/apiService.js`
@@ -113,7 +97,7 @@ The system incorporates defense-in-depth security principles, including **BCrypt
 
 ---
 
-### 6. Git Repository Hardening & Sensitive File Exclusions
+### 5. Git Repository Hardening & Sensitive File Exclusions
 * **Files Modified**:
   * `.gitignore` (Workspace Root)
 
@@ -126,7 +110,7 @@ The system incorporates defense-in-depth security principles, including **BCrypt
 
 ---
 
-### 7. Production SQL Privacy & Log Hygiene
+### 6. Production SQL Privacy & Log Hygiene
 * **Files Modified**:
   * `application.properties` in all 3 microservices
 
@@ -140,7 +124,7 @@ The system incorporates defense-in-depth security principles, including **BCrypt
 
 ---
 
-### 8. Dynamic Host Resolution (Mobile App API Security)
+### 7. Dynamic Host Resolution (Mobile App API Security)
 * **Files Modified**:
   * `mobile-app/src/api/config.js`
 
@@ -159,7 +143,6 @@ The system incorporates defense-in-depth security principles, including **BCrypt
 | **BCrypt Hashing** | Microservice Services (`AdminService`, `FarmerService`, `BuyerService`, `TransporterService`) | Prevents plain-text password leakage and rainbow table attacks |
 | **CORS Policy & Preflight** | `AdminController.java`, `WebConfig.java` | Handles OPTIONS preflight requests and enables cross-origin web client calls |
 | **Env Var Fallbacks** | `application.properties` | Prevents hardcoded database credentials in Git repository |
-| **JWT Config** | `application.properties` | Secure stateless API authentication per environment |
 | **Input Validation** | `LoginScreen.js`, `apiService.js` | Enforces DB-driven admin authentication and sanitizes payload input |
 | **Root `.gitignore`** | Workspace Root | Blocks accidental commits of `.env`, `target/`, and `node_modules/` |
 | **SQL Log Suppression** | JPA Properties | Prevents sensitive PII/query leakage in server log files |
