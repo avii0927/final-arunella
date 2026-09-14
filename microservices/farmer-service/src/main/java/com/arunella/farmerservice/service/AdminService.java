@@ -36,8 +36,10 @@ public class AdminService {
     public Admin updateAdmin(Long id, Admin adminData) {
         Admin existing = adminRepository.findById(id).orElse(null);
         if (existing != null) {
-            if (adminData.getName() != null) existing.setName(adminData.getName());
-            if (adminData.getEmail() != null) existing.setEmail(adminData.getEmail());
+            if (adminData.getName() != null)
+                existing.setName(adminData.getName());
+            if (adminData.getEmail() != null)
+                existing.setEmail(adminData.getEmail());
             if (adminData.getPassword() != null && !adminData.getPassword().isEmpty()) {
                 if (!isBCryptHashed(adminData.getPassword())) {
                     existing.setPassword(passwordEncoder.encode(adminData.getPassword()));
@@ -75,7 +77,8 @@ public class AdminService {
                     if (isBCryptHashed(dbPass)) {
                         matches = passwordEncoder.matches(cleanPassword, dbPass);
                     }
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
 
                 if (matches || cleanPassword.equals(dbPass)) {
                     // Upgrade plain text password to BCrypt hash in DB if needed
@@ -91,14 +94,15 @@ public class AdminService {
         // 2. Auto-seed default super admin with BCrypt hash if missing from DB
         if ("admin@arunella.lk".equalsIgnoreCase(cleanEmail) && "admin123".equals(cleanPassword)) {
             Optional<Admin> defaultFound = allAdmins.stream()
-                .filter(a -> a.getEmail() != null && "admin@arunella.lk".equalsIgnoreCase(a.getEmail().trim()))
-                .findFirst();
+                    .filter(a -> a.getEmail() != null && "admin@arunella.lk".equalsIgnoreCase(a.getEmail().trim()))
+                    .findFirst();
             if (defaultFound.isPresent()) {
                 Admin admin = defaultFound.get();
                 admin.setPassword(passwordEncoder.encode("admin123"));
                 return Optional.of(adminRepository.save(admin));
             }
-            Admin defaultAdmin = new Admin(null, "Super Admin", "admin@arunella.lk", passwordEncoder.encode("admin123"));
+            Admin defaultAdmin = new Admin(null, "Super Admin", "admin@arunella.lk",
+                    passwordEncoder.encode("admin123"));
             return Optional.of(adminRepository.save(defaultAdmin));
         }
 
@@ -106,6 +110,7 @@ public class AdminService {
     }
 
     private boolean isBCryptHashed(String password) {
-        return password != null && (password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$"));
+        return password != null
+                && (password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$"));
     }
 }
